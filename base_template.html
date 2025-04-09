@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>大脚科技 - 儿童足部健康</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'shine': 'shine 2s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shine: {
+                            '0%': { 'background-position': '200% center' },
+                            '100%': { 'background-position': '-200% center' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 通用动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes rotate-3d {
+            0% { transform: rotate3d(0, 1, 0, 0deg); }
+            100% { transform: rotate3d(0, 1, 0, 360deg); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 自定义类 */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-rotate-3d {
+            animation: rotate-3d 15s linear infinite;
+        }
+        
+        .animate-shine {
+            background: linear-gradient(90deg, 
+                        rgba(255,255,255,0) 0%, 
+                        rgba(255,255,255,0.8) 50%, 
+                        rgba(255,255,255,0) 100%);
+            background-size: 200% auto;
+            animation: shine 2s linear infinite;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 毛玻璃效果 */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-effect-dark {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 高级阴影效果 */
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(74, 165, 255, 0.5);
+        }
+        
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 控制溢出滚动行为 */
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f5f5f5;
+        }
+        
+        /* iPhone 15 Pro Max 样式 */
+        .iphone-frame {
+            width: 390px; /* iPhone 15 Pro Max 宽度 */
+            height: 844px; /* iPhone 15 Pro Max 高度 */
+            border-radius: 55px;
+            padding: 15px;
+            background: #1A1A1C; /* 深空黑 */
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                      0 30px 60px -30px rgba(0, 0, 0, 0.3),
+                      inset 0 -2px 6px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        /* 电源键 */
+        .power-button {
+            position: absolute;
+            right: -3px;
+            top: 180px;
+            width: 3px;
+            height: 80px;
+            background: #2a2a2c;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* 音量按钮 */
+        .volume-up {
+            position: absolute;
+            left: -3px;
+            top: 150px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .volume-down {
+            position: absolute;
+            left: -3px;
+            top: 220px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        /* 操作岛 */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        /* 屏幕内容 */
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 45px;
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+            z-index: 50;
+        }
+        
+        /* Toast通知样式 */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 底部导航栏样式 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 360px;
+            z-index: 50;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+    <!-- iPhone 15 Pro Max 框架 -->
+    <div class="iphone-frame">
+        <!-- 硬件按钮 -->
+        <div class="power-button"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        
+        <!-- 刘海/动态岛 -->
+        <div class="dynamic-island"></div>
+        
+        <!-- 屏幕内容 -->
+        <div class="screen-content">
+            <!-- 主要应用内容 - 每个页面的内容将在这里展示 -->
+            <div class="app-content w-full h-full overflow-y-auto overflow-x-hidden relative">
+                <!-- 此处替换为具体页面内容 -->
+                <div class="flex justify-center items-center h-full">
+                    <h1 class="text-2xl font-bold text-gray-800">大脚科技应用</h1>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+    
+    <!-- Toast通知 -->
+    <div id="toast" class="toast">提示信息</div>
+    
+    <script>
+        // 显示Toast通知函数
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // 按钮点击波纹效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('button, .btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('absolute', 'w-0', 'h-0', 'rounded-full', 'bg-white', 'opacity-30');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.classList.add('w-[300px]', 'h-[300px]', 'transition-all', 'duration-500', 'ease-out');
+                    }, 0);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 500);
+                });
+            });
+            
+            // 元素淡入效果
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                element.classList.add('show');
+            });
+        });
+    </script>
+</body>
+</html> 

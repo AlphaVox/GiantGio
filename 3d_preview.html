@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D预览 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js 3D库 -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/DRACOLoader.js"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'bounce-small': 'bounceSmall 2s infinite',
+                        'pulse-slow': 'pulseSlow 3s infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        bounceSmall: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.7 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 3D模型容器 */
+        #model-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            touch-action: none;
+        }
+        
+        /* 颜色选择器 */
+        .color-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-option.active {
+            transform: scale(1.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 控制按钮 */
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 加载动画 */
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #EFF6FF;
+            border-radius: 50%;
+            border-top-color: #4AA5FF;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 顶部装饰元素 -->
+        <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+        <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+        
+        <!-- 顶部导航 -->
+        <div class="sticky top-0 z-30 bg-gradient-to-br from-primary to-primary-dark px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <a href="javascript:history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="text-xl font-bold text-white ml-4">3D预览</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="screenshot-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button id="share-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3D模型容器 -->
+        <div id="model-container" class="relative"></div>
+        
+        <!-- 加载指示器 -->
+        <div id="loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-40">
+            <div class="loader mb-4"></div>
+            <p class="text-gray-600 animate-pulse">加载3D模型中...</p>
+        </div>
+        
+        <!-- 底部控制区域 -->
+        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-20">
+            <!-- 控制器背景 -->
+            <div class="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white to-white/0 pointer-events-none"></div>
+            
+            <!-- 鞋子信息卡片 -->
+            <div class="px-4 mb-3 animate-fade-in-up">
+                <div class="bg-white rounded-xl shadow-sm p-4 premium-shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-lg">儿童智能成长跟踪鞋</h3>
+                            <p class="text-gray-500 text-sm mt-1">蓝色恐龙款 / 31码</p>
+                        </div>
+                        <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                            ¥299.00
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex justify-between">
+                            <div class="text-sm">
+                                <span class="text-gray-500">材质:</span> 
+                                <span class="font-medium">环保TPU + 透气网布</span>
+                            </div>
+                            <button class="text-primary text-sm flex items-center">
+                                详情
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 颜色选择区 -->
+            <div class="px-4 mb-3 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="bg-white rounded-xl shadow-sm p-4">
+                    <h4 class="font-medium mb-3">颜色选择</h4>
+                    <div class="flex space-x-4 justify-around">
+                        <div class="color-option active" style="background-color: #4AA5FF;" data-color="#4AA5FF"></div>
+                        <div class="color-option" style="background-color: #FF5757;" data-color="#FF5757"></div>
+                        <div class="color-option" style="background-color: #52CC7A;" data-color="#52CC7A"></div>
+                        <div class="color-option" style="background-color: #FFD966;" data-color="#FFD966"></div>
+                        <div class="color-option" style="background-color: #A78BFA;" data-color="#A78BFA"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 控制按钮区 -->
+            <div class="px-4 pb-20 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="flex justify-center space-x-5 mb-4">
+                    <button id="reset-btn" class="control-btn text-gray-600 hover:text-primary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button id="rotate-btn" class="control-btn text-gray-600 hover:text-primary">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button id="zoom-in-btn" class="control-btn text-gray-600 hover:text-primary">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button id="zoom-out-btn" class="control-btn text-gray-600 hover:text-primary">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <a href="shoe_customize.html" class="flex-1 h-11 rounded-full border border-primary text-primary font-medium flex items-center justify-center">
+                        <i class="fas fa-palette mr-2"></i> 定制此款
+                    </a>
+                    <a href="my_designs.html" class="flex-1 h-11 rounded-full bg-primary text-white font-medium flex items-center justify-center">
+                        <i class="fas fa-save mr-2"></i> 保存设计
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 截图成功提示 -->
+        <div id="screenshot-toast" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white py-3 px-5 rounded-lg opacity-0 transition-opacity duration-300 z-50 flex items-center">
+            <i class="fas fa-check-circle mr-2"></i> 截图已保存到相册
+        </div>
+        
+        <!-- 分享菜单 -->
+        <div id="share-menu" class="fixed inset-0 bg-black/50 z-50 hidden flex flex-col justify-end">
+            <div class="bg-white rounded-t-3xl p-6 animate-fade-in-up">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-lg">分享到</h3>
+                    <button id="close-share" class="w-8 h-8 flex items-center justify-center text-gray-400">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center text-white text-xl mb-2">
+                            <i class="fab fa-weixin"></i>
+                        </div>
+                        <span class="text-xs">微信</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl mb-2">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <span class="text-xs">微信朋友圈</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 rounded-full bg-red-500 flex items-center justify-center text-white text-xl mb-2">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span class="text-xs">邮件</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-white text-xl mb-2">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <span class="text-xs">复制链接</span>
+                    </div>
+                </div>
+                
+                <button class="w-full h-12 rounded-full bg-gray-100 text-gray-800 font-medium">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM元素
+        const modelContainer = document.getElementById('model-container');
+        const loader = document.getElementById('loader');
+        const resetBtn = document.getElementById('reset-btn');
+        const rotateBtn = document.getElementById('rotate-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const screenshotBtn = document.getElementById('screenshot-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const screenshotToast = document.getElementById('screenshot-toast');
+        const shareMenu = document.getElementById('share-menu');
+        const closeShareBtn = document.getElementById('close-share');
+        const colorOptions = document.querySelectorAll('.color-option');
+        
+        // Three.js 变量
+        let scene, camera, renderer, controls, model, autoRotate = false;
+        
+        // 初始化3D场景
+        function init() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8fafc);
+            
+            // 创建相机
+            camera = new THREE.PerspectiveCamera(45, modelContainer.clientWidth / modelContainer.clientHeight, 0.1, 1000);
+            camera.position.set(0, 2, 5);
+            
+            // 创建渲染器
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(modelContainer.clientWidth, modelContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            modelContainer.appendChild(renderer.domElement);
+            
+            // 创建控制器
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 3;
+            controls.maxDistance = 10;
+            controls.maxPolarAngle = Math.PI / 1.8;
+            
+            // 添加光源
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(-5, 5, -3);
+            scene.add(pointLight);
+            
+            // 加载3D模型 (由于没有实际的童鞋模型，这里使用临时替代方案)
+            loadTemporaryShoeModel();
+            
+            // 添加窗口调整监听器
+            window.addEventListener('resize', onWindowResize);
+            
+            // 开始动画循环
+            animate();
+        }
+        
+        // 临时加载鞋子模型（实际项目中应替换为真实的鞋子模型）
+        function loadTemporaryShoeModel() {
+            // 创建基础几何体来模拟鞋子形状
+            const geometry = new THREE.BoxGeometry(1.5, 0.5, 3);
+            
+            // 创建材质
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x4AA5FF,
+                shininess: 30,
+                flatShading: false
+            });
+            
+            // 创建鞋子网格
+            model = new THREE.Mesh(geometry, material);
+            model.castShadow = true;
+            model.receiveShadow = true;
+            model.position.set(0, 0.5, 0); // 将模型位置调高，使其居中
+            scene.add(model);
+            
+            // 添加更多细节来模拟鞋子的形状
+            addShoeDetails();
+            
+            // 隐藏加载指示器
+            setTimeout(() => {
+                loader.style.opacity = 0;
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }, 1500); // 模拟加载时间
+        }
+        
+        // 添加鞋子细节模拟真实鞋子
+        function addShoeDetails() {
+            // 鞋面
+            const upperGeometry = new THREE.BoxGeometry(1.4, 0.6, 1.5);
+            const upperMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x4AA5FF,
+                shininess: 20
+            });
+            const upper = new THREE.Mesh(upperGeometry, upperMaterial);
+            upper.position.set(0, 0.3, -0.7);
+            model.add(upper);
+            
+            // 鞋带区域
+            const laceGeometry = new THREE.BoxGeometry(0.8, 0.1, 1.2);
+            const laceMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xEEEEEE,
+                shininess: 10
+            });
+            const lace = new THREE.Mesh(laceGeometry, laceMaterial);
+            lace.position.set(0, 0.4, -0.7);
+            model.add(lace);
+            
+            // 鞋舌
+            const tongueGeometry = new THREE.BoxGeometry(0.6, 0.2, 0.8);
+            const tongueMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x4AA5FF,
+                shininess: 10
+            });
+            const tongue = new THREE.Mesh(tongueGeometry, tongueMaterial);
+            tongue.position.set(0, 0.5, -1.3);
+            model.add(tongue);
+            
+            // 鞋跟
+            const heelGeometry = new THREE.BoxGeometry(1.2, 0.7, 0.7);
+            const heelMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x4AA5FF,
+                shininess: 30
+            });
+            const heel = new THREE.Mesh(heelGeometry, heelMaterial);
+            heel.position.set(0, 0.1, 1.1);
+            model.add(heel);
+            
+            // 鞋底
+            const soleGeometry = new THREE.BoxGeometry(1.5, 0.3, 3);
+            const soleMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xEEEEEE,
+                shininess: 5
+            });
+            const sole = new THREE.Mesh(soleGeometry, soleMaterial);
+            sole.position.set(0, -0.3, 0);
+            model.add(sole);
+            
+            // 旋转和缩放模型以便更好地查看
+            model.rotation.x = -0.2;
+            model.rotation.y = 0.5;
+            model.scale.set(0.6, 0.6, 0.6);
+        }
+        
+        // 窗口大小调整处理
+        function onWindowResize() {
+            camera.aspect = modelContainer.clientWidth / modelContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(modelContainer.clientWidth, modelContainer.clientHeight);
+        }
+        
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // 更新控制器
+            controls.update();
+            
+            // 自动旋转模型
+            if (autoRotate && model) {
+                model.rotation.y += 0.01;
+            }
+            
+            // 渲染场景
+            renderer.render(scene, camera);
+        }
+        
+        // 重置模型位置
+        function resetModelPosition() {
+            if (model) {
+                // 重置模型旋转和位置
+                model.rotation.x = -0.2;
+                model.rotation.y = 0.5;
+                model.rotation.z = 0;
+                
+                // 重置相机位置
+                camera.position.set(0, 2, 5);
+                controls.update();
+            }
+        }
+        
+        // 改变模型颜色
+        function changeModelColor(colorHex) {
+            if (model) {
+                // 更新鞋子主体颜色
+                model.material.color.set(colorHex);
+                
+                // 更新鞋面颜色
+                model.children.forEach(child => {
+                    if (child.material.color.getHexString() !== 'eeeeee') {
+                        child.material.color.set(colorHex);
+                    }
+                });
+            }
+        }
+        
+        // 切换自动旋转
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            if (autoRotate) {
+                rotateBtn.classList.add('text-primary');
+                rotateBtn.classList.remove('text-gray-600');
+            } else {
+                rotateBtn.classList.remove('text-primary');
+                rotateBtn.classList.add('text-gray-600');
+            }
+        }
+        
+        // 放大模型
+        function zoomIn() {
+            if (controls.target.distanceTo(camera.position) > controls.minDistance + 0.5) {
+                camera.position.lerp(controls.target, 0.1);
+                controls.update();
+            }
+        }
+        
+        // 缩小模型
+        function zoomOut() {
+            if (controls.target.distanceTo(camera.position) < controls.maxDistance - 0.5) {
+                const direction = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
+                camera.position.add(direction.multiplyScalar(0.5));
+                controls.update();
+            }
+        }
+        
+        // 截图功能
+        function takeScreenshot() {
+            // 隐藏控制UI
+            const controlElements = document.querySelectorAll('.control-btn, .color-option');
+            controlElements.forEach(el => el.style.opacity = '0');
+            
+            // 渲染场景
+            renderer.render(scene, camera);
+            
+            // 获取画布数据并创建图片
+            const dataURL = renderer.domElement.toDataURL('image/png');
+            
+            // 在实际应用中，这里应该调用设备的保存图片API
+            // 这里我们只是模拟成功效果
+            setTimeout(() => {
+                // 显示控制UI
+                controlElements.forEach(el => el.style.opacity = '1');
+                
+                // 显示成功提示
+                screenshotToast.style.opacity = '1';
+                setTimeout(() => {
+                    screenshotToast.style.opacity = '0';
+                }, 2000);
+            }, 500);
+        }
+        
+        // 显示分享菜单
+        function showShareMenu() {
+            shareMenu.style.display = 'flex';
+            setTimeout(() => {
+                shareMenu.querySelector('div').classList.add('animate-fade-in-up');
+            }, 10);
+        }
+        
+        // 隐藏分享菜单
+        function hideShareMenu() {
+            shareMenu.querySelector('div').classList.remove('animate-fade-in-up');
+            setTimeout(() => {
+                shareMenu.style.display = 'none';
+            }, 300);
+        }
+        
+        // 事件监听器
+        resetBtn.addEventListener('click', resetModelPosition);
+        rotateBtn.addEventListener('click', toggleAutoRotate);
+        zoomInBtn.addEventListener('click', zoomIn);
+        zoomOutBtn.addEventListener('click', zoomOut);
+        screenshotBtn.addEventListener('click', takeScreenshot);
+        shareBtn.addEventListener('click', showShareMenu);
+        closeShareBtn.addEventListener('click', hideShareMenu);
+        shareMenu.addEventListener('click', function(e) {
+            if (e.target === shareMenu) {
+                hideShareMenu();
+            }
+        });
+        // 移除购物车按钮事件监听器
+        // addToCartBtn.addEventListener('click', addToCart);
+        
+        // 颜色选择
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除其他选项的active类
+                colorOptions.forEach(o => o.classList.remove('active'));
+                // 给当前选项添加active类
+                this.classList.add('active');
+                // 改变模型颜色
+                const color = this.getAttribute('data-color');
+                changeModelColor(color);
+            });
+        });
+        
+        // 初始化3D场景
+        init();
+    });
+</script>
+</html> 

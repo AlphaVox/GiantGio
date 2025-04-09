@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>订单详情 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 订单进度条样式 */
+        .order-progress-line {
+            height: 2px;
+            background-color: #E2E8F0;
+            position: relative;
+            z-index: 1;
+            margin: 0 15px;
+            flex: 1;
+        }
+        
+        .order-progress-line.active {
+            background-color: #4AA5FF;
+        }
+        
+        .order-progress-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .order-progress-dot.active {
+            background-color: #4AA5FF;
+        }
+        
+        .order-progress-dot.active .inner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 顶部装饰元素 -->
+        <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+        <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+        
+        <!-- 顶部导航 -->
+        <div class="relative bg-gradient-to-br from-primary to-primary-dark px-4 py-4">
+            <div class="flex items-center">
+                <a href="javascript:history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-white ml-4">订单详情</h1>
+            </div>
+        </div>
+        
+        <!-- 订单状态卡片 -->
+        <div class="px-4 pt-4 animate-fade-in-up">
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg font-bold">支付成功</h2>
+                    <div class="text-primary text-sm font-medium">等待发货</div>
+                </div>
+                
+                <!-- 订单进度指示器 -->
+                <div class="flex items-center my-6">
+                    <div class="order-progress-dot active">
+                        <div class="inner-dot"></div>
+                    </div>
+                    <div class="order-progress-line active"></div>
+                    <div class="order-progress-dot active">
+                        <div class="inner-dot"></div>
+                    </div>
+                    <div class="order-progress-line"></div>
+                    <div class="order-progress-dot">
+                        <div class="inner-dot"></div>
+                    </div>
+                    <div class="order-progress-line"></div>
+                    <div class="order-progress-dot">
+                        <div class="inner-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 订单进度文字说明 -->
+                <div class="flex text-xs justify-between px-1">
+                    <div class="w-20 text-center text-primary font-medium">下单成功</div>
+                    <div class="w-20 text-center text-primary font-medium">已支付</div>
+                    <div class="w-20 text-center text-gray-400">配送中</div>
+                    <div class="w-20 text-center text-gray-400">已签收</div>
+                </div>
+                
+                <!-- 订单时间轴 -->
+                <div class="mt-5 border-t border-gray-100 pt-3">
+                    <div class="flex mb-3">
+                        <div class="w-24 text-sm text-gray-500">2023-07-15 14:30</div>
+                        <div class="text-sm">订单支付成功</div>
+                    </div>
+                    <div class="flex mb-3">
+                        <div class="w-24 text-sm text-gray-500">2023-07-15 14:28</div>
+                        <div class="text-sm">订单创建成功</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 订单信息 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">订单信息</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex justify-between py-1.5">
+                        <div class="text-sm text-gray-600">订单编号</div>
+                        <div class="text-sm" id="orderNo">DJT20230715001</div>
+                    </div>
+                    <div class="flex justify-between py-1.5">
+                        <div class="text-sm text-gray-600">下单时间</div>
+                        <div class="text-sm">2023-07-15 14:28:35</div>
+                    </div>
+                    <div class="flex justify-between py-1.5">
+                        <div class="text-sm text-gray-600">支付方式</div>
+                        <div class="text-sm">支付宝</div>
+                    </div>
+                    <div class="flex justify-between py-1.5">
+                        <div class="text-sm text-gray-600">支付时间</div>
+                        <div class="text-sm">2023-07-15 14:30:12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 配送信息 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">配送信息</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex mb-2">
+                        <div class="text-primary text-xl mr-3">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center">
+                                <span class="font-medium">李妈妈</span>
+                                <span class="ml-3 text-gray-600">13812345678</span>
+                            </div>
+                            <div class="text-gray-600 mt-1 text-sm max-w-xs">
+                                广东省广州市天河区华南理工大学五山校区B6栋405室
+                            </div>
+                            <div class="mt-2 flex">
+                                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full mr-2">默认</span>
+                                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">学校</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 border-t border-gray-100 pt-3">
+                        <div class="flex justify-between py-1.5">
+                            <div class="text-sm text-gray-600">配送方式</div>
+                            <div class="text-sm">顺丰速递</div>
+                        </div>
+                        <div class="flex justify-between py-1.5">
+                            <div class="text-sm text-gray-600">预计送达</div>
+                            <div class="text-sm">2023-07-18 (星期二)</div>
+                        </div>
+                        <div class="flex justify-between py-1.5">
+                            <div class="text-sm text-gray-600">快递单号</div>
+                            <div class="text-sm flex items-center">
+                                <span>暂未获取</span>
+                                <i class="fas fa-copy ml-2 text-primary text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 商品信息 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-medium">商品信息</h3>
+                        <div class="text-xs text-gray-500">
+                            共2件商品
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片 -->
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <div class="flex">
+                        <div class="w-20 h-20 rounded-lg overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://placehold.co/240x240/EFF6FF/4AA5FF?text=成长鞋&font=opensans" class="w-full h-full object-cover" alt="儿童成长鞋">
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="font-medium">儿童智能成长跟踪鞋 - 蓝色恐龙款</h3>
+                            <div class="flex items-center mt-1">
+                                <span class="bg-lightblue text-primary text-xs px-2 py-0.5 rounded mr-2">智能感应</span>
+                                <span class="bg-mint text-green-600 text-xs px-2 py-0.5 rounded">防滑耐磨</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-2">规格：31码 / 蓝色 / 恐龙图案</div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-primary font-medium">¥ 299.00</div>
+                                <div class="text-gray-500 text-sm">x1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 定制服务 -->
+                <div class="px-4 py-3">
+                    <div class="flex">
+                        <div class="w-20 h-20 rounded-lg overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://placehold.co/240x240/F3E8FF/A78BFA?text=定制&font=opensans" class="w-full h-full object-cover" alt="定制服务">
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="font-medium">专属定制名字刻印服务</h3>
+                            <div class="flex items-center mt-1">
+                                <span class="bg-lilac text-purple-600 text-xs px-2 py-0.5 rounded">定制服务</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-2">内容：小明 / 英文字体</div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-primary font-medium">¥ 20.00</div>
+                                <div class="text-gray-500 text-sm">x1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 价格详情 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.25s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">价格详情</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex justify-between items-center py-2">
+                        <div class="text-sm text-gray-600">商品金额</div>
+                        <div class="text-sm">¥ 319.00</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-2">
+                        <div class="text-sm text-gray-600">运费</div>
+                        <div class="text-sm">+ ¥ 0.00</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-2">
+                        <div class="text-sm text-gray-600">优惠券</div>
+                        <div class="text-sm text-primary">- ¥ 30.00</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-2">
+                        <div class="text-sm text-gray-600">积分抵扣</div>
+                        <div class="text-sm text-primary">- ¥ 2.00</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-2">
+                        <div class="text-sm text-gray-600">会员折扣</div>
+                        <div class="text-sm text-primary">- ¥ 14.35</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-2 mt-2 border-t border-gray-100 pt-3">
+                        <div class="text-gray-800 font-medium">实付金额</div>
+                        <div class="text-xl text-primary font-bold">¥ 272.65</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部按钮 -->
+        <div class="px-4 py-4 pb-20 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="flex space-x-3">
+                <button class="w-1/2 h-11 rounded-full border border-gray-300 text-gray-600 font-medium flex items-center justify-center">
+                    <i class="fas fa-headset mr-2"></i> 联系客服
+                </button>
+                <button class="w-1/2 h-11 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium flex items-center justify-center shadow-md">
+                    <i class="fas fa-shipping-fast mr-2"></i> 查看物流
+                </button>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+            <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-home text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+            <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">选购</span>
+            </a>
+            <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                    <i class="fas fa-shoe-prints"></i>
+                </div>
+                <span class="text-xs text-primary mt-6">足部扫描</span>
+            </a>
+            <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">我的设计</span>
+            </a>
+            <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-users text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">家庭中心</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 动画效果
+            const elements = document.querySelectorAll('.animate-fade-in-up');
+            elements.forEach((el, i) => {
+                el.style.animationDelay = `${i * 0.1}s`;
+            });
+            
+            // 复制运单号功能
+            const copyButton = document.querySelector('.fas.fa-copy');
+            if (copyButton) {
+                copyButton.addEventListener('click', function() {
+                    // 模拟复制功能，实际项目中需要使用Clipboard API
+                    alert('快递单号已复制到剪贴板');
+                });
+            }
+            
+            // 从localStorage获取订单号
+            const pendingOrder = localStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                const orderData = JSON.parse(pendingOrder);
+                const orderNoElement = document.getElementById('orderNo');
+                if (orderNoElement && orderData.orderNo) {
+                    orderNoElement.textContent = orderData.orderNo;
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>扫描结果 - 大脚科技</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'shine': 'shine 2s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shine: {
+                            '0%': { 'background-position': '200% center' },
+                            '100%': { 'background-position': '-200% center' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 通用动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        @keyframes rotate-3d {
+            0% { transform: rotate3d(0, 1, 0, 0deg); }
+            100% { transform: rotate3d(0, 1, 0, 360deg); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(-90%); opacity: 0.8; }
+            100% { transform: translateY(90%); opacity: 0.2; }
+        }
+        
+        /* 自定义类 */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .animate-rotate-3d {
+            animation: rotate-3d 15s linear infinite;
+        }
+        
+        .animate-shine {
+            background: linear-gradient(90deg, 
+                        rgba(255,255,255,0) 0%, 
+                        rgba(255,255,255,0.8) 50%, 
+                        rgba(255,255,255,0) 100%);
+            background-size: 200% auto;
+            animation: shine 2s linear infinite;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .animate-scan {
+            animation: scan 2.5s ease-in-out infinite;
+        }
+        
+        /* 毛玻璃效果 */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-effect-dark {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 高级阴影效果 */
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(74, 165, 255, 0.5);
+        }
+        
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 控制溢出滚动行为 */
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f5f5f5;
+        }
+        
+        /* iPhone 15 Pro Max 样式 */
+        .iphone-frame {
+            width: 390px; /* iPhone 15 Pro Max 宽度 */
+            height: 844px; /* iPhone 15 Pro Max 高度 */
+            border-radius: 55px;
+            padding: 15px;
+            background: #1A1A1C; /* 深空黑 */
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                      0 30px 60px -30px rgba(0, 0, 0, 0.3),
+                      inset 0 -2px 6px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* 电源键 */
+        .power-button {
+            position: absolute;
+            right: -3px;
+            top: 180px;
+            width: 3px;
+            height: 80px;
+            background: #2a2a2c;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* 音量按钮 */
+        .volume-up {
+            position: absolute;
+            left: -3px;
+            top: 150px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .volume-down {
+            position: absolute;
+            left: -3px;
+            top: 220px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        /* 操作岛 */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        /* 屏幕内容 */
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 45px;
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+            z-index: 50;
+        }
+        
+        /* Toast通知样式 */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 3D模型控制样式 */
+        .model-controls {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 卡片滑动样式 */
+        .card-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0;
+        }
+        
+        .card-slider > div {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+        
+        .card-slider.active {
+            cursor: grabbing;
+        }
+        
+        /* 数据卡片样式 */
+        .data-card {
+            border-radius: 16px;
+            padding: 15px;
+            margin-right: 15px;
+            width: 220px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #4AA5FF, #FF9AA2);
+        }
+        
+        /* 圆形进度条样式 */
+        .progress-circle {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        /* 扫描结果内容特定样式 */
+        .foot-parameter {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .parameter-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .pressure-map {
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(74, 165, 255, 0.2), rgba(255, 154, 162, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pressure-point {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,0,0,0.7) 0%, rgba(255,0,0,0) 70%);
+        }
+        
+        /* 底部导航栏样式 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 70px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 15px;
+            z-index: 40;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <!-- iPhone 15 Pro Max 框架 -->
+    <div class="iphone-frame">
+        <!-- 硬件按钮 -->
+        <div class="power-button"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        
+        <!-- 刘海/动态岛 -->
+        <div class="dynamic-island"></div>
+        
+        <!-- 屏幕内容 -->
+        <div class="screen-content">
+            <!-- 主要应用内容 -->
+            <div class="app-content w-full h-full overflow-y-auto overflow-x-hidden relative bg-gradient-to-b from-white to-blue-50/30">
+                <!-- 页面内容从这里开始 -->
+                <div class="mobile-container">
+                    <!-- 顶部导航 -->
+                    <div class="py-4 px-5 flex items-center justify-between">
+                        <a href="dashboard.html" class="flex items-center text-text">
+                            <i class="fas fa-arrow-left text-lg"></i>
+                            <span class="ml-2 font-semibold">返回</span>
+                        </a>
+                        <h1 class="text-xl font-bold text-text">足部扫描结果</h1>
+                        <div class="w-8"></div>
+                    </div>
+                    
+                    <!-- 导航栏 -->
+                    <div class="px-5 pt-14 pb-3 sticky top-0 z-30 glass-effect">
+                        <div class="flex items-center justify-between">
+                            <a href="foot_scan.html" class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md">
+                                    <i class="fas fa-arrow-left text-gray-700"></i>
+                                </div>
+                                <span class="ml-3 font-bold text-gray-800">扫描结果</span>
+                            </a>
+                            <button id="shareBtn" class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md">
+                                <i class="fas fa-share-alt text-gray-700"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 彩色装饰元素 -->
+                    <div class="absolute top-40 right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse-slow opacity-40"></div>
+                    <div class="absolute bottom-80 left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/20 to-primary/10 animate-float opacity-40"></div>
+                    
+                    <!-- 主体内容 -->
+                    <div class="px-5 pt-3 pb-20">
+                        <!-- 3D模型展示区 -->
+                        <div class="mb-6 fade-in">
+                            <div class="relative rounded-2xl overflow-hidden bg-gradient-to-b from-lightblue/60 to-white border border-white shadow-lg">
+                                <div id="model-container" class="h-56 flex items-center justify-center relative">
+                                    <!-- 3D模型图像/SVG -->
+                                    <div id="foot-3d-model" class="w-44 h-44 relative animate-float">
+                                        <!-- 足部轮廓 SVG -->
+                                        <svg width="100%" height="100%" viewBox="0 0 200 200" class="relative z-10">
+                                            <!-- 足部外轮廓 -->
+                                            <path d="M60,40 C70,32 90,25 110,35 C130,45 145,70 150,100 C155,130 145,160 130,170 C115,180 90,180 75,170 C60,160 50,130 50,100 C50,70 50,48 60,40 Z" 
+                                                  fill="rgba(74, 165, 255, 0.1)" 
+                                                  stroke="rgba(74, 165, 255, 0.7)" 
+                                                  stroke-width="1.5"></path>
+                                            
+                                            <!-- 足部压力热点 -->
+                                            <circle cx="85" cy="60" r="8" fill="rgba(255, 0, 0, 0.2)">
+                                                <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" />
+                                            </circle>
+                                            <circle cx="115" cy="65" r="7" fill="rgba(255, 0, 0, 0.3)">
+                                                <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2.5s" repeatCount="indefinite" />
+                                            </circle>
+                                            <circle cx="100" cy="140" r="12" fill="rgba(255, 0, 0, 0.4)">
+                                                <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite" />
+                                            </circle>
+                                            
+                                            <!-- 测量标记线 -->
+                                            <line x1="50" y1="100" x2="150" y2="100" stroke="rgba(74, 165, 255, 0.5)" stroke-width="0.5" stroke-dasharray="3,3" />
+                                            <line x1="100" y1="40" x2="100" y2="170" stroke="rgba(74, 165, 255, 0.5)" stroke-width="0.5" stroke-dasharray="3,3" />
+                                            
+                                            <!-- 标注文字 -->
+                                            <text x="158" y="102" font-family="Arial" font-size="8" fill="rgba(74, 165, 255, 0.9)">宽度</text>
+                                            <text x="102" y="180" font-family="Arial" font-size="8" fill="rgba(74, 165, 255, 0.9)">长度</text>
+                                        </svg>
+                                        
+                                        <!-- 扫描动画效果 -->
+                                        <div class="scanning-line animate-scan absolute left-0 w-full h-[10%] top-0 bg-gradient-to-b from-transparent via-primary/30 to-transparent"></div>
+                                    </div>
+                                    
+                                    <!-- 辅助标记点 -->
+                                    <div class="absolute top-3 right-3 text-xs text-primary/80 bg-white/80 px-2 py-1 rounded-full shadow-sm glass-effect">
+                                        <i class="fas fa-check-circle mr-1"></i>
+                                        <span>高精度扫描</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 控制按钮 -->
+                                <div class="flex justify-around p-3 bg-white/80 backdrop-blur-sm border-t border-white/50">
+                                    <button id="zoomOutBtn" class="control-btn">
+                                        <i class="fas fa-search-minus text-gray-700"></i>
+                                    </button>
+                                    <button id="playBtn" class="control-btn">
+                                        <i class="fas fa-play text-gray-700"></i>
+                                    </button>
+                                    <button id="zoomInBtn" class="control-btn">
+                                        <i class="fas fa-search-plus text-gray-700"></i>
+                                    </button>
+                                    <button id="rotateBtn" class="control-btn">
+                                        <i class="fas fa-sync-alt text-gray-700"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 扫描结果摘要 -->
+                        <div class="mb-6 fade-in" style="transition-delay: 0.1s;">
+                            <div class="p-4 rounded-2xl bg-white premium-shadow border border-gray-100">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                        <i class="fas fa-chart-bar text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">扫描结果</h3>
+                                        <p class="text-xs text-gray-500">2023年12月15日</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="rounded-xl overflow-hidden bg-gradient-to-r from-blue-50 to-blue-100/30 p-3 mb-3">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="text-xs text-gray-500 mb-1">推荐鞋码</div>
+                                            <div class="text-2xl font-bold text-gray-800">29</div>
+                                            <div class="text-xs text-gray-600 mt-1">欧码 | 中国码 29</div>
+                                        </div>
+                                        <div class="flex-1 mx-5">
+                                            <div class="text-xs text-gray-500 mb-1 text-center">足部发育</div>
+                                            <div class="h-3 rounded-full bg-gray-200 overflow-hidden">
+                                                <div class="h-full rounded-full bg-gradient-to-r from-primary to-secondary w-[75%]"></div>
+                                            </div>
+                                            <div class="text-xs text-right mt-1 text-gray-600">超出同龄人15%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col space-y-2">
+                                    <div class="text-sm">
+                                        <span class="font-medium text-gray-700">扫描精度:</span>
+                                        <span class="text-gray-600">高精度 (±0.2mm)</span>
+                                    </div>
+                                    <div class="text-sm">
+                                        <span class="font-medium text-gray-700">建议重新扫描:</span>
+                                        <span class="text-gray-600">3个月后</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 滑动卡片区域 -->
+                        <div class="mb-6 fade-in" style="transition-delay: 0.2s;">
+                            <h3 class="font-bold text-gray-800 mb-3">足部数据</h3>
+                            
+                            <div class="card-slider pb-3">
+                                <!-- 足长卡片 -->
+                                <div class="data-card premium-shadow">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">足长</h4>
+                                            <p class="text-xs text-gray-500">从脚跟到脚趾</p>
+                                        </div>
+                                        <div class="w-8 h-8 rounded-full bg-lightblue flex items-center justify-center">
+                                            <i class="fas fa-ruler text-primary"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-end">
+                                        <div class="text-2xl font-bold text-gray-800">178<span class="text-sm font-normal ml-1">mm</span></div>
+                                        <div class="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs">
+                                            +5%
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>上次</span>
+                                            <span>标准值</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-700">169mm</span>
+                                            <span class="text-gray-700">165mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 足宽卡片 -->
+                                <div class="data-card premium-shadow">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">足宽</h4>
+                                            <p class="text-xs text-gray-500">最宽处测量</p>
+                                        </div>
+                                        <div class="w-8 h-8 rounded-full bg-lightpink flex items-center justify-center">
+                                            <i class="fas fa-arrows-alt-h text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-end">
+                                        <div class="text-2xl font-bold text-gray-800">74<span class="text-sm font-normal ml-1">mm</span></div>
+                                        <div class="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs">
+                                            +3%
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>上次</span>
+                                            <span>标准值</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-700">72mm</span>
+                                            <span class="text-gray-700">70mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 脚弓高度卡片 -->
+                                <div class="data-card premium-shadow">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">脚弓高度</h4>
+                                            <p class="text-xs text-gray-500">足部内侧弓</p>
+                                        </div>
+                                        <div class="w-8 h-8 rounded-full bg-peach flex items-center justify-center">
+                                            <i class="fas fa-sort-amount-up text-orange-500"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-end">
+                                        <div class="text-2xl font-bold text-gray-800">22<span class="text-sm font-normal ml-1">mm</span></div>
+                                        <div class="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs">
+                                            正常
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>上次</span>
+                                            <span>标准范围</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-700">21mm</span>
+                                            <span class="text-gray-700">18-25mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 脚跟宽度卡片 -->
+                                <div class="data-card premium-shadow">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">脚跟宽度</h4>
+                                            <p class="text-xs text-gray-500">后跟测量</p>
+                                        </div>
+                                        <div class="w-8 h-8 rounded-full bg-mint flex items-center justify-center">
+                                            <i class="fas fa-shoe-prints text-green-500"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-end">
+                                        <div class="text-2xl font-bold text-gray-800">45<span class="text-sm font-normal ml-1">mm</span></div>
+                                        <div class="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs">
+                                            +2%
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                            <span>上次</span>
+                                            <span>标准值</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-700">44mm</span>
+                                            <span class="text-gray-700">43mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 压力分布 -->
+                        <div class="mb-6 fade-in" style="transition-delay: 0.3s;">
+                            <h3 class="font-bold text-gray-800 mb-3">足部压力分布</h3>
+                            
+                            <div class="p-4 rounded-2xl bg-white premium-shadow border border-gray-100">
+                                <div class="pressure-map mb-4">
+                                    <svg width="220" height="140" viewBox="0 0 220 140">
+                                        <!-- 足部轮廓 -->
+                                        <path d="M70,30 C80,25 100,20 120,30 C140,40 155,70 160,100 C165,130 145,140 130,130 C115,120 90,120 75,130 C60,140 50,130 55,100 C60,70 60,35 70,30 Z" 
+                                            fill="rgba(255, 255, 255, 0.8)" 
+                                            stroke="rgba(0, 0, 0, 0.1)" 
+                                            stroke-width="0.5"></path>
+                                        
+                                        <!-- 压力点 - 脚趾 -->
+                                        <circle cx="130" cy="40" r="12" fill="rgba(255, 0, 0, 0.5)">
+                                            <animate attributeName="opacity" values="0.5;0.7;0.5" dur="2s" repeatCount="indefinite" />
+                                        </circle>
+                                        <!-- 压力点 - 脚掌前部 -->
+                                        <circle cx="120" cy="70" r="20" fill="rgba(255, 0, 0, 0.7)">
+                                            <animate attributeName="opacity" values="0.7;0.9;0.7" dur="2.5s" repeatCount="indefinite" />
+                                        </circle>
+                                        <!-- 压力点 - 脚跟 -->
+                                        <circle cx="75" cy="115" r="18" fill="rgba(255, 0, 0, 0.6)">
+                                            <animate attributeName="opacity" values="0.6;0.8;0.6" dur="3s" repeatCount="indefinite" />
+                                        </circle>
+                                        
+                                        <!-- 标注 -->
+                                        <text x="130" y="40" font-size="8" fill="rgba(0,0,0,0.7)" text-anchor="middle">25%</text>
+                                        <text x="120" y="70" font-size="8" fill="rgba(0,0,0,0.7)" text-anchor="middle">45%</text>
+                                        <text x="75" y="115" font-size="8" fill="rgba(0,0,0,0.7)" text-anchor="middle">30%</text>
+                                    </svg>
+                                </div>
+                                
+                                <p class="text-sm text-gray-700 mb-3">
+                                    压力主要集中在脚掌前部(45%)和脚跟(30%)，这是正常的分布模式。脚趾区域压力适中(25%)，有助于维持平衡。
+                                </p>
+                                
+                                <div class="flex justify-between items-center bg-blue-50/50 p-3 rounded-xl">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <i class="fas fa-info-circle text-primary"></i>
+                                    </div>
+                                    <div class="flex-1 ml-3">
+                                        <h4 class="font-medium text-gray-800 text-sm">建议</h4>
+                                        <p class="text-xs text-gray-600">选择有足弓支撑的鞋款，确保前掌有足够空间。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 成长建议 -->
+                        <div class="mb-8 fade-in" style="transition-delay: 0.4s;">
+                            <h3 class="font-bold text-gray-800 mb-3">成长建议</h3>
+                            
+                            <div class="p-4 rounded-2xl bg-white premium-shadow border border-gray-100">
+                                <div class="flex flex-col space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center mr-3">
+                                            <i class="fas fa-shoe-prints text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800">选择合适鞋款</h4>
+                                            <p class="text-sm text-gray-600 mt-1">
+                                                根据足部测量结果，建议选择29码(欧码)、有足弓支撑和足够前掌空间的童鞋。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <div class="w-10 h-10 rounded-full bg-secondary/10 flex-shrink-0 flex items-center justify-center mr-3">
+                                            <i class="fas fa-running text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800">运动建议</h4>
+                                            <p class="text-sm text-gray-600 mt-1">
+                                                多进行跳跃、平衡训练等活动，有助于足部肌肉发育和协调性提升。
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <div class="w-10 h-10 rounded-full bg-accent/10 flex-shrink-0 flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-alt text-accent"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800">跟踪周期</h4>
+                                            <p class="text-sm text-gray-600 mt-1">
+                                                建议每3个月进行一次足部扫描，及时跟踪孩子足部发育情况，确保穿着合适尺码的鞋子。
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="flex space-x-4 mb-20 fade-in" style="transition-delay: 0.5s;">
+                            <button id="saveBtn" class="flex-1 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg relative overflow-hidden">
+                                保存结果
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 底部导航栏 -->
+                    <div class="bottom-nav">
+                        <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                            <i class="fas fa-home text-gray-400 mb-1"></i>
+                            <span class="text-xs text-gray-400">首页</span>
+                        </a>
+                        <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                            <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                            <span class="text-xs text-gray-400">选购</span>
+                        </a>
+                        <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                                <i class="fas fa-shoe-prints"></i>
+                            </div>
+                            <span class="text-xs text-primary mt-6">足部扫描</span>
+                        </a>
+                        <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                            <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                            <span class="text-xs text-gray-400">我的设计</span>
+                        </a>
+                        <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                            <i class="fas fa-users text-gray-400 mb-1"></i>
+                            <span class="text-xs text-gray-400">家庭中心</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+    
+    <!-- Toast通知 -->
+    <div id="toast" class="toast">提示信息</div>
+    
+    <script>
+        // 模型控制功能
+        document.getElementById('rotateBtn').addEventListener('click', function() {
+            console.log('旋转模型');
+            showToast('模型旋转中...');
+        });
+        
+        document.getElementById('zoomInBtn').addEventListener('click', function() {
+            console.log('放大模型');
+            showToast('放大查看细节');
+        });
+        
+        document.getElementById('zoomOutBtn').addEventListener('click', function() {
+            console.log('缩小模型');
+            showToast('缩小查看全貌');
+        });
+        
+        document.getElementById('playBtn').addEventListener('click', function() {
+            console.log('播放动画');
+            this.querySelector('i').classList.toggle('fa-play');
+            this.querySelector('i').classList.toggle('fa-pause');
+            showToast('动画播放中...');
+        });
+        
+        // 卡片滑动功能
+        const cardSlider = document.querySelector('.card-slider');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        cardSlider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            cardSlider.classList.add('active');
+            startX = e.pageX - cardSlider.offsetLeft;
+            scrollLeft = cardSlider.scrollLeft;
+        });
+        
+        cardSlider.addEventListener('mouseleave', () => {
+            isDown = false;
+            cardSlider.classList.remove('active');
+        });
+        
+        cardSlider.addEventListener('mouseup', () => {
+            isDown = false;
+            cardSlider.classList.remove('active');
+        });
+        
+        cardSlider.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - cardSlider.offsetLeft;
+            const walk = (x - startX) * 2;
+            cardSlider.scrollLeft = scrollLeft - walk;
+        });
+        
+        // 触摸事件支持
+        cardSlider.addEventListener('touchstart', (e) => {
+            isDown = true;
+            cardSlider.classList.add('active');
+            startX = e.touches[0].pageX - cardSlider.offsetLeft;
+            scrollLeft = cardSlider.scrollLeft;
+        });
+        
+        cardSlider.addEventListener('touchend', () => {
+            isDown = false;
+            cardSlider.classList.remove('active');
+        });
+        
+        cardSlider.addEventListener('touchmove', (e) => {
+            if(!isDown) return;
+            const x = e.touches[0].pageX - cardSlider.offsetLeft;
+            const walk = (x - startX) * 2;
+            cardSlider.scrollLeft = scrollLeft - walk;
+        });
+        
+        // Toast通知功能
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // 保存按钮功能
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            // 添加按钮点击波纹效果
+            const ripple = document.createElement('span');
+            ripple.classList.add('absolute', 'w-0', 'h-0', 'rounded-full', 'bg-white', 'opacity-30');
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.classList.add('w-[300px]', 'h-[300px]', 'transition-all', 'duration-500', 'ease-out');
+            }, 0);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 500);
+            
+            // 模拟保存操作
+            setTimeout(() => {
+                showToast('结果已保存到成长记录！');
+                // 在实际应用中可以添加跳转到成长记录页面的代码
+            }, 1000);
+        });
+        
+        // 分享按钮功能
+        document.getElementById('shareBtn').addEventListener('click', function() {
+            showToast('分享功能即将上线！');
+        });
+        
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('show');
+                }, index * 100);
+            });
+            
+            // 初始显示状态
+            showToast('扫描结果已生成', 2000);
+        });
+    </script>
+</body>
+</html> 

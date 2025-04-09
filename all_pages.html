@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大脚科技 - 所有页面展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        
+        .page-container {
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .page-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .page-iframe {
+            border: none;
+            height: 900px;
+            width: 100%;
+            transform: scale(0.9);
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+        }
+        
+        .page-container:hover .page-iframe {
+            transform: scale(0.92);
+        }
+        
+        .toggle-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(74, 165, 255, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-button:hover {
+            background-color: rgba(74, 165, 255, 1);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        
+        .filter-button {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-button:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .filter-button.active {
+            background-color: #4AA5FF;
+            color: white;
+            border-color: #4AA5FF;
+        }
+        
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .pages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        
+        .loading {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .loading div {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #4AA5FF;
+            animation: loading 1.2s linear infinite;
+        }
+        
+        .loading div:nth-child(1) {
+            top: 8px;
+            left: 8px;
+            animation-delay: 0s;
+        }
+        
+        .loading div:nth-child(2) {
+            top: 8px;
+            left: 32px;
+            animation-delay: -0.4s;
+        }
+        
+        .loading div:nth-child(3) {
+            top: 8px;
+            left: 56px;
+            animation-delay: -0.8s;
+        }
+        
+        .loading div:nth-child(4) {
+            top: 32px;
+            left: 8px;
+            animation-delay: -0.4s;
+        }
+        
+        .loading div:nth-child(5) {
+            top: 32px;
+            left: 32px;
+            animation-delay: -0.8s;
+        }
+        
+        .loading div:nth-child(6) {
+            top: 32px;
+            left: 56px;
+            animation-delay: -1.2s;
+        }
+        
+        .loading div:nth-child(7) {
+            top: 56px;
+            left: 8px;
+            animation-delay: -0.8s;
+        }
+        
+        .loading div:nth-child(8) {
+            top: 56px;
+            left: 32px;
+            animation-delay: -1.2s;
+        }
+        
+        .loading div:nth-child(9) {
+            top: 56px;
+            left: 56px;
+            animation-delay: -1.6s;
+        }
+        
+        @keyframes loading {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .page-title {
+            position: relative;
+            margin-bottom: 16px;
+            padding-left: 16px;
+            border-left: 4px solid #4AA5FF;
+            line-height: 1.2;
+        }
+        
+        .page-tag {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: normal;
+            background-color: #EFF6FF;
+            color: #4AA5FF;
+        }
+        
+        .page-note {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        @media (max-width: 1023px) {
+            .pages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="p-6 md:p-8">
+    <button class="toggle-button" id="toggleView">
+        <i class="fas fa-th-large mr-2"></i> 切换视图
+    </button>
+
+    <header class="mb-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-3">大脚科技 - 全部页面展示</h1>
+        <p class="text-gray-600 max-w-2xl mx-auto mb-6">以下展示了应用的所有19个页面，您可以一站式查看和比较所有设计。每个页面都显示完整的iPhone样机效果。</p>
+        
+        <div class="filter-buttons">
+            <button class="filter-button active" data-filter="all">全部页面</button>
+            <button class="filter-button" data-filter="core">核心功能页</button>
+            <button class="filter-button" data-filter="shopping">购物流程页</button>
+            <button class="filter-button" data-filter="scan">足部扫描页</button>
+            <button class="filter-button" data-filter="account">账户管理页</button>
+        </div>
+    </header>
+
+    <div class="pages-grid" id="pagesContainer">
+        <!-- 欢迎页 -->
+        <div class="page-container category-core category-account">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    欢迎页
+                    <span class="page-tag">入口</span>
+                </h2>
+                <p class="page-note">welcome.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="welcome.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 首页 -->
+        <div class="page-container category-core">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    首页
+                    <span class="page-tag">核心</span>
+                </h2>
+                <p class="page-note">dashboard.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="dashboard.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 鞋款选择 -->
+        <div class="page-container category-core category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    鞋款选择
+                    <span class="page-tag">选购</span>
+                </h2>
+                <p class="page-note">shoe_selection.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="shoe_selection.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 鞋款定制 -->
+        <div class="page-container category-core category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    鞋款定制
+                    <span class="page-tag">设计</span>
+                </h2>
+                <p class="page-note">shoe_customize.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="shoe_customize.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 3D预览页 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    3D预览
+                    <span class="page-tag">预览</span>
+                </h2>
+                <p class="page-note">3d_preview.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="3d_preview.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 我的设计 -->
+        <div class="page-container category-core category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    我的设计
+                    <span class="page-tag">收藏</span>
+                </h2>
+                <p class="page-note">my_designs.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="my_designs.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 鞋款状态 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    鞋款状态
+                    <span class="page-tag">追踪</span>
+                </h2>
+                <p class="page-note">shoe_status.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="shoe_status.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 足部扫描 -->
+        <div class="page-container category-core category-scan">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    足部扫描
+                    <span class="page-tag">测量</span>
+                </h2>
+                <p class="page-note">foot_scan.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="foot_scan.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 扫描结果 -->
+        <div class="page-container category-scan">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    扫描结果
+                    <span class="page-tag">数据</span>
+                </h2>
+                <p class="page-note">scan_result.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="scan_result.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 订单确认 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    订单确认
+                    <span class="page-tag">购买</span>
+                </h2>
+                <p class="page-note">order_confirm.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="order_confirm.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 订单详情 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    订单详情
+                    <span class="page-tag">信息</span>
+                </h2>
+                <p class="page-note">order_details.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="order_details.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 支付页面 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    支付页面
+                    <span class="page-tag">支付</span>
+                </h2>
+                <p class="page-note">payment.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="payment.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 物流追踪 -->
+        <div class="page-container category-shopping">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    物流追踪
+                    <span class="page-tag">配送</span>
+                </h2>
+                <p class="page-note">logistics_tracking.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="logistics_tracking.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 家庭中心 -->
+        <div class="page-container category-account">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    家庭中心
+                    <span class="page-tag">管理</span>
+                </h2>
+                <p class="page-note">family_center.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="family_center.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 儿童档案 -->
+        <div class="page-container category-account">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    儿童档案
+                    <span class="page-tag">信息</span>
+                </h2>
+                <p class="page-note">child_profiles.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="child_profiles.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 成长记录 -->
+        <div class="page-container category-scan">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    成长记录
+                    <span class="page-tag">数据</span>
+                </h2>
+                <p class="page-note">growth_record.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="growth_record.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 用户账户 -->
+        <div class="page-container category-account">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    用户账户
+                    <span class="page-tag">设置</span>
+                </h2>
+                <p class="page-note">user_account.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="user_account.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 客户服务 -->
+        <div class="page-container category-account">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    客户服务
+                    <span class="page-tag">支持</span>
+                </h2>
+                <p class="page-note">customer_service.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="customer_service.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+
+        <!-- 基础模板 -->
+        <div class="page-container category-core">
+            <div class="p-4">
+                <h2 class="page-title text-xl font-bold text-gray-800">
+                    基础模板
+                    <span class="page-tag">开发</span>
+                </h2>
+                <p class="page-note">base_template.html</p>
+            </div>
+            <div class="flex justify-center items-center relative">
+                <div class="loading page-loading">
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                    <div></div><div></div><div></div>
+                </div>
+                <iframe src="base_template.html" class="page-iframe invisible" onload="this.classList.remove('invisible'); this.previousElementSibling.style.display = 'none';"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-16 text-center text-gray-500 text-sm pb-8">
+        <p>© 2023 大脚科技 - 3D儿童鞋款定制平台</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleView');
+            const pagesContainer = document.getElementById('pagesContainer');
+            let isGridView = true;
+
+            toggleButton.addEventListener('click', function() {
+                isGridView = !isGridView;
+                
+                if (isGridView) {
+                    pagesContainer.classList.remove('pages-list');
+                    pagesContainer.classList.add('pages-grid');
+                    toggleButton.innerHTML = '<i class="fas fa-th-large mr-2"></i> 切换视图';
+                } else {
+                    pagesContainer.classList.remove('pages-grid');
+                    pagesContainer.classList.add('pages-list');
+                    toggleButton.innerHTML = '<i class="fas fa-list mr-2"></i> 切换视图';
+                }
+            });
+
+            // 添加iframe加载完成的处理
+            const iframes = document.querySelectorAll('.page-iframe');
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', function() {
+                    this.classList.remove('invisible');
+                    const loadingEl = this.previousElementSibling;
+                    if (loadingEl && loadingEl.classList.contains('page-loading')) {
+                        loadingEl.style.display = 'none';
+                    }
+                });
+            });
+
+            // 添加过滤功能
+            const filterButtons = document.querySelectorAll('.filter-button');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新按钮状态
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    const containers = document.querySelectorAll('.page-container');
+                    
+                    containers.forEach(container => {
+                        if (filter === 'all') {
+                            container.style.display = 'block';
+                        } else {
+                            if (container.classList.contains('category-' + filter)) {
+                                container.style.display = 'block';
+                            } else {
+                                container.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

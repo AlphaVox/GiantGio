@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>家庭中心 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
+    <!-- 手机模拟器 -->
+    <div class="relative w-[375px] h-[812px] mx-auto my-10 rounded-[50px] overflow-hidden bg-light shadow-2xl border-4 border-gray-200">
+        <!-- 底部指示条 -->
+        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-[140px] h-[5px] bg-gray-300 rounded-full z-50"></div>
+        
+        <!-- 主屏幕内容 -->
+        <div class="relative w-full h-full overflow-y-auto overflow-x-hidden bg-gradient-to-b from-white to-blue-50/30">
+            <!-- 顶部装饰元素 -->
+            <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+            <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+            
+            <!-- 头部用户信息 -->
+            <div class="relative bg-gradient-to-br from-primary to-primary-dark pt-12 pb-20 px-6">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-white">家庭中心</h1>
+                    <div class="flex space-x-3">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center mt-6">
+                    <div class="relative">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-md">
+                            <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=头像&font=opensans" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-md">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-xl font-semibold text-white">李妈妈</h2>
+                        <p class="text-white/80 text-sm mt-1">VIP会员 · 有效期至2024年12月</p>
+                        <div class="flex items-center mt-2">
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded-full">已认证家长</span>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded-full ml-2">已绑定学校</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 孩子档案卡片 -->
+            <div class="relative mx-6 -mt-12 mb-6 animate-fade-in-up">
+                <div class="bg-white rounded-xl shadow-sm p-5 premium-shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-child text-primary mr-2"></i>
+                            孩子档案
+                        </h3>
+                        <a href="child_profiles.html" class="text-sm text-primary flex items-center">
+                            <span>管理</span>
+                            <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=小明&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-medal text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-gray-800">小明 (男)</h4>
+                                <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full font-medium">当前选中</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>5岁3个月</span>
+                                <span class="mx-2">·</span>
+                                <span>幼儿园大班</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足长</div>
+                                <div class="font-semibold text-gray-800 mt-1">20.3 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足宽</div>
+                                <div class="font-semibold text-gray-800 mt-1">8.2 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">当前鞋码</div>
+                                <div class="font-semibold text-gray-800 mt-1">31码</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex">
+                        <a href="child_profiles.html?action=add" class="w-full bg-lightblue hover:bg-blue-100 text-primary font-medium rounded-lg py-2 text-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-plus mr-1"></i>
+                            添加孩子
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 功能菜单区 -->
+            <div class="px-6 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-th-large text-primary"></i>
+                    </div>
+                    账户服务
+                </h3>
+                
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <!-- 第一行功能 -->
+                    <div class="grid grid-cols-4 divide-x divide-gray-100 border-b border-gray-100">
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-lightblue flex items-center justify-center mb-2">
+                                <i class="fas fa-shopping-bag text-primary"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">我的订单</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-mint flex items-center justify-center mb-2">
+                                <i class="fas fa-ticket-alt text-green-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">我的卡券</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-peach flex items-center justify-center mb-2">
+                                <i class="fas fa-gift text-orange-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">会员权益</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-lilac flex items-center justify-center mb-2">
+                                <i class="fas fa-heart text-purple-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">收藏夹</span>
+                        </a>
+                    </div>
+                    
+                    <!-- 第二行功能 -->
+                    <div class="grid grid-cols-4 divide-x divide-gray-100">
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-lightpink flex items-center justify-center mb-2">
+                                <i class="fas fa-map-marker-alt text-secondary"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">收货地址</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center mb-2">
+                                <i class="fas fa-headset text-yellow-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">客户服务</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-2">
+                                <i class="fas fa-school text-blue-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">学校绑定</span>
+                        </a>
+                        <a href="#" class="p-4 flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-2">
+                                <i class="fas fa-ellipsis-h text-gray-600"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">更多服务</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设置列表 -->
+            <div class="px-6 mb-20 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-cog text-primary"></i>
+                    </div>
+                    系统设置
+                </h3>
+                
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <a href="#" class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-user-circle text-gray-600"></i>
+                            </div>
+                            <span class="ml-3 text-gray-800">个人资料设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    
+                    <a href="#" class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-bell text-gray-600"></i>
+                            </div>
+                            <span class="ml-3 text-gray-800">通知与提醒</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    
+                    <a href="#" class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-lock text-gray-600"></i>
+                            </div>
+                            <span class="ml-3 text-gray-800">隐私与安全</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    
+                    <a href="#" class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-question-circle text-gray-600"></i>
+                            </div>
+                            <span class="ml-3 text-gray-800">帮助与反馈</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    
+                    <a href="#" class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-info-circle text-gray-600"></i>
+                            </div>
+                            <span class="ml-3 text-gray-800">关于我们</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    
+                    <div class="p-4">
+                        <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg py-3 transition-all">
+                            退出登录
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+                <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-home text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">首页</span>
+                </a>
+                <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">选购</span>
+                </a>
+                <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                    <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                        <i class="fas fa-shoe-prints"></i>
+                    </div>
+                    <span class="text-xs text-primary mt-6">足部扫描</span>
+                </a>
+                <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">我的设计</span>
+                </a>
+                <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-users text-primary mb-1"></i>
+                    <span class="text-xs text-primary">家庭中心</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取档案内容区域
+            const profileContainer = document.querySelector('.relative.mx-6.-mt-12.mb-6 .bg-white.rounded-xl.shadow-sm.p-5');
+            
+            // 创建头部
+            let profileHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-child text-primary mr-2"></i>
+                        孩子档案
+                    </h3>
+                    <a href="child_profiles.html" class="text-sm text-primary flex items-center">
+                        <span>管理</span>
+                        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                    </a>
+                </div>
+            `;
+            
+            // 添加默认的孩子档案（小明）
+            profileHTML += `
+                <div class="mb-5 pb-5 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=小明&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-medal text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-gray-800">小明 (男)</h4>
+                                <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full font-medium">当前选中</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>5岁3个月</span>
+                                <span class="mx-2">·</span>
+                                <span>幼儿园大班</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足长</div>
+                                <div class="font-semibold text-gray-800 mt-1">20.3 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足宽</div>
+                                <div class="font-semibold text-gray-800 mt-1">8.2 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">当前鞋码</div>
+                                <div class="font-semibold text-gray-800 mt-1">31码</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加小红的档案
+            profileHTML += `
+                <div class="mb-5 pb-5 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                <img src="https://placehold.co/200x200/FDF2F8/FF9AA2?text=小红&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-medal text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-gray-800">小红 (女)</h4>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>3岁6个月</span>
+                                <span class="mx-2">·</span>
+                                <span>幼儿园小班</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足长</div>
+                                <div class="font-semibold text-gray-800 mt-1">18.5 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足宽</div>
+                                <div class="font-semibold text-gray-800 mt-1">7.8 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">当前鞋码</div>
+                                <div class="font-semibold text-gray-800 mt-1">28码</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加小华的档案
+            profileHTML += `
+                <div class="mb-5 pb-5 border-b border-gray-100">
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                <img src="https://placehold.co/200x200/EDF2FF/6B8AFF?text=小华&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-medal text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-gray-800">小华 (男)</h4>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>7岁1个月</span>
+                                <span class="mx-2">·</span>
+                                <span>小学一年级</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足长</div>
+                                <div class="font-semibold text-gray-800 mt-1">22.1 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足宽</div>
+                                <div class="font-semibold text-gray-800 mt-1">8.5 cm</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">当前鞋码</div>
+                                <div class="font-semibold text-gray-800 mt-1">33码</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 检查是否有从localStorage加载的孩子档案
+            try {
+                // 获取保存的孩子档案
+                const childProfiles = JSON.parse(localStorage.getItem('childProfiles')) || [];
+                
+                // 添加从localStorage加载的孩子档案
+                childProfiles.forEach((profile, index) => {
+                    // 计算性别显示
+                    const gender = profile.gender === 'male' ? '男' : '女';
+                    
+                    // 计算年龄
+                    const birthDate = new Date(profile.birthDate);
+                    const today = new Date();
+                    let years = today.getFullYear() - birthDate.getFullYear();
+                    let months = today.getMonth() - birthDate.getMonth();
+                    
+                    if (months < 0) {
+                        years--;
+                        months += 12;
+                    }
+                    
+                    const ageDisplay = `${years}岁${months}个月`;
+                    
+                    // 确定是否是最后一个孩子档案
+                    const isLast = index === childProfiles.length - 1 && childProfiles.length > 0;
+                    const needBorder = !(isLast && index === childProfiles.length - 1);
+                    
+                    // 添加孩子信息卡片
+                    profileHTML += `
+                        <div class="${needBorder ? 'mb-5 pb-5 border-b border-gray-100' : ''}">
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                        <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=${profile.name}&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                        <i class="fas fa-medal text-xs"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h4 class="font-medium text-gray-800">${profile.name} (${gender})</h4>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500 mt-1">
+                                        <span>${ageDisplay}</span>
+                                        <span class="mx-2">·</span>
+                                        <span>${profile.school}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex-1 border-r border-gray-100">
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-500">足长</div>
+                                        <div class="font-semibold text-gray-800 mt-1">${profile.footLength || '--'} ${profile.footLength ? 'cm' : ''}</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 border-r border-gray-100">
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-500">足宽</div>
+                                        <div class="font-semibold text-gray-800 mt-1">${profile.footWidth || '--'} ${profile.footWidth ? 'cm' : ''}</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-500">当前鞋码</div>
+                                        <div class="font-semibold text-gray-800 mt-1">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('读取孩子档案时出错:', error);
+            }
+            
+            // 添加小屁的档案(示例，与您图片中显示的名称匹配)
+            profileHTML += `
+                <div>
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20">
+                                <img src="https://placehold.co/200x200/ECFDF5/10B981?text=小屁&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-medal text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-gray-800">小屁 (男)</h4>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>1岁3个月</span>
+                                <span class="mx-2">·</span>
+                                <span>华南理工大学</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足长</div>
+                                <div class="font-semibold text-gray-800 mt-1">--</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 border-r border-gray-100">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">足宽</div>
+                                <div class="font-semibold text-gray-800 mt-1">--</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500">当前鞋码</div>
+                                <div class="font-semibold text-gray-800 mt-1">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加"添加孩子"按钮
+            profileHTML += `
+                <div class="mt-4 flex">
+                    <a href="child_profiles.html?action=add" class="w-full bg-lightblue hover:bg-blue-100 text-primary font-medium rounded-lg py-2 text-sm transition-all flex items-center justify-center">
+                        <i class="fas fa-plus mr-1"></i>
+                        添加孩子
+                    </a>
+                </div>
+            `;
+            
+            // 更新DOM
+            profileContainer.innerHTML = profileHTML;
+        });
+    </script>
+</body>
+</html> 

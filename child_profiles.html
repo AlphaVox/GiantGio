@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>孩子档案管理 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 装饰元素 -->
+        <div class="absolute top-[80px] right-[-80px] w-[180px] h-[180px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-2xl opacity-70"></div>
+        <div class="absolute bottom-[120px] left-[-50px] w-[120px] h-[120px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-xl opacity-50"></div>
+        
+        <!-- 头部导航 -->
+        <header class="bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-30">
+            <div class="flex items-center">
+                <a href="family_center.html" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800 ml-4">孩子档案管理</h1>
+            </div>
+            <div>
+                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- 内容区域 -->
+        <div class="p-4">
+            <!-- 当前选中的孩子档案 -->
+            <div class="mb-6 animate-fade-in-up">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-star text-primary"></i>
+                    </div>
+                    当前选中
+                </h2>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="flex items-center p-4 border-b border-gray-100">
+                        <div class="relative">
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30">
+                                <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=小明&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs shadow-sm">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold text-gray-800">小明 (男)</h3>
+                                <span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full">当前选中</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mt-1">
+                                <span>5岁3个月</span>
+                                <span class="mx-2">·</span>
+                                <span>幼儿园大班</span>
+                            </div>
+                            <div class="flex items-center text-xs text-gray-500 mt-1">
+                                <span>足长: 20.3cm</span>
+                                <span class="mx-1">·</span>
+                                <span>足宽: 8.2cm</span>
+                                <span class="mx-1">·</span>
+                                <span>鞋码: 31码</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex divide-x divide-gray-100">
+                        <button class="flex-1 py-3 text-sm font-medium text-primary hover:bg-lightblue transition-colors flex items-center justify-center">
+                            <i class="fas fa-edit mr-1"></i>
+                            编辑资料
+                        </button>
+                        <button class="flex-1 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                            <i class="fas fa-eye mr-1"></i>
+                            查看详情
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他孩子档案 -->
+            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-child text-primary"></i>
+                    </div>
+                    其他档案
+                </h2>
+                
+                <div class="space-y-3">
+                    <!-- 孩子档案 1 -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="flex items-center p-4 border-b border-gray-100">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100">
+                                <img src="https://placehold.co/200x200/F9FAFB/94A3B8?text=小红&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-medium text-gray-800">小红 (女)</h3>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <span>3岁6个月</span>
+                                    <span class="mx-2">·</span>
+                                    <span>幼儿园小班</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex divide-x divide-gray-100">
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>
+                                编辑
+                            </button>
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                <i class="fas fa-trash-alt mr-1"></i>
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 孩子档案 2 -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="flex items-center p-4 border-b border-gray-100">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100">
+                                <img src="https://placehold.co/200x200/F9FAFB/94A3B8?text=小华&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-medium text-gray-800">小华 (男)</h3>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <span>7岁1个月</span>
+                                    <span class="mx-2">·</span>
+                                    <span>小学一年级</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex divide-x divide-gray-100">
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>
+                                编辑
+                            </button>
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                <i class="fas fa-trash-alt mr-1"></i>
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 添加孩子按钮 -->
+            <div class="mb-24 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <button id="addChildBtn" class="w-full bg-white shadow-sm rounded-xl py-4 px-4 flex items-center justify-center text-primary font-medium hover:bg-lightblue transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fas fa-plus text-primary"></i>
+                    </div>
+                    <span>添加新的孩子档案</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 新建档案弹出框 -->
+        <div class="fixed inset-0 bg-black/50 z-50 hidden" id="newProfileModal">
+            <div class="max-w-md mx-auto h-screen flex items-center justify-center">
+                <div class="bg-white rounded-2xl w-[90%] max-h-[90%] overflow-y-auto">
+                    <div class="p-5 border-b border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">创建新档案</h3>
+                            <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <form>
+                            <div class="mb-5 flex flex-col items-center">
+                                <div class="relative w-20 h-20 mb-3">
+                                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                                        <img src="https://placehold.co/200x200/F9FAFB/94A3B8?text=照片&font=opensans" alt="默认头像" class="w-full h-full object-cover">
+                                    </div>
+                                    <button type="button" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary shadow-md flex items-center justify-center text-white">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-500">点击添加头像</p>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                                    <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入孩子姓名">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">性别</label>
+                                    <div class="flex space-x-3">
+                                        <label class="flex-1 flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer">
+                                            <input type="radio" name="gender" value="male" class="mr-3 text-primary">
+                                            <span class="text-sm">男孩</span>
+                                        </label>
+                                        <label class="flex-1 flex items-center border border-gray-300 rounded-lg p-3 cursor-pointer">
+                                            <input type="radio" name="gender" value="female" class="mr-3 text-primary">
+                                            <span class="text-sm">女孩</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">出生日期</label>
+                                    <input type="date" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">学校/年级</label>
+                                    <input type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入学校和年级信息">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">足长 (cm)</label>
+                                        <input type="number" step="0.1" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="选填">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">足宽 (cm)</label>
+                                        <input type="number" step="0.1" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="选填">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                                    <textarea class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary h-20" placeholder="添加备注信息（选填）"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 flex space-x-3">
+                                <button type="button" class="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg text-center hover:bg-gray-200 transition-colors">取消</button>
+                                <button type="submit" class="flex-1 py-3 bg-primary text-white font-medium rounded-lg text-center hover:bg-primary-dark transition-colors">创建档案</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // 页面交互脚本
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('newProfileModal');
+                const addChildBtn = document.getElementById('addChildBtn');
+                const closeModalBtn = modal.querySelector('.fa-times').parentElement;
+                const cancelBtn = modal.querySelector('button[type="button"]');
+                const otherProfilesContainer = document.querySelector('.mb-6[style="animation-delay: 0.1s;"] .space-y-3');
+                
+                // 打开弹窗函数
+                function openModal() {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // 防止背景滚动
+                }
+                
+                // 关闭弹窗函数
+                function closeModal() {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+                
+                // 添加孩子按钮点击事件
+                addChildBtn.addEventListener('click', openModal);
+                
+                // 关闭按钮点击事件
+                closeModalBtn.addEventListener('click', closeModal);
+                
+                // 取消按钮点击事件
+                cancelBtn.addEventListener('click', closeModal);
+                
+                // 检查URL参数，如果有action=add，则自动打开弹窗
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('action') === 'add') {
+                    openModal();
+                }
+                
+                // 创建新的孩子档案卡片
+                function createProfileCard(data) {
+                    const newCard = document.createElement('div');
+                    newCard.className = 'bg-white rounded-xl shadow-sm overflow-hidden';
+                    
+                    // 计算性别显示
+                    const gender = data.gender === 'male' ? '男' : '女';
+                    
+                    // 计算年龄
+                    const birthDate = new Date(data.birthDate);
+                    const today = new Date();
+                    let years = today.getFullYear() - birthDate.getFullYear();
+                    let months = today.getMonth() - birthDate.getMonth();
+                    
+                    if (months < 0) {
+                        years--;
+                        months += 12;
+                    }
+                    
+                    const ageDisplay = `${years}岁${months}个月`;
+                    
+                    newCard.innerHTML = `
+                        <div class="flex items-center p-4 border-b border-gray-100">
+                            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100">
+                                <img src="https://placehold.co/200x200/F9FAFB/94A3B8?text=${data.name}&font=opensans" alt="孩子头像" class="w-full h-full object-cover">
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-medium text-gray-800">${data.name} (${gender})</h3>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 mt-1">
+                                    <span>${ageDisplay}</span>
+                                    <span class="mx-2">·</span>
+                                    <span>${data.school}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex divide-x divide-gray-100">
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                <i class="fas fa-edit mr-1"></i>
+                                编辑
+                            </button>
+                            <button class="flex-1 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center delete-profile-btn">
+                                <i class="fas fa-trash-alt mr-1"></i>
+                                删除
+                            </button>
+                        </div>
+                    `;
+                    
+                    // 为删除按钮添加事件
+                    const deleteBtn = newCard.querySelector('.delete-profile-btn');
+                    deleteBtn.addEventListener('click', function() {
+                        if (confirm('确定要删除这个档案吗？')) {
+                            newCard.remove();
+                        }
+                    });
+                    
+                    return newCard;
+                }
+                
+                // 表单提交处理
+                const form = modal.querySelector('form');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取表单数据
+                    const formData = {
+                        name: form.querySelector('input[placeholder="请输入孩子姓名"]').value,
+                        gender: form.querySelector('input[name="gender"]:checked').value,
+                        birthDate: form.querySelector('input[type="date"]').value,
+                        school: form.querySelector('input[placeholder="请输入学校和年级信息"]').value,
+                        footLength: form.querySelector('input[placeholder="选填"]').value,
+                        footWidth: form.querySelectorAll('input[placeholder="选填"]')[1].value,
+                        notes: form.querySelector('textarea').value
+                    };
+                    
+                    // 创建新档案卡片并添加到其他档案区域
+                    const newCard = createProfileCard(formData);
+                    otherProfilesContainer.prepend(newCard);
+                    
+                    // 添加到个人中心的孩子档案部分
+                    updateUserAccountProfileSection(formData);
+                    
+                    // 显示成功消息并关闭弹窗
+                    alert('档案创建成功！');
+                    closeModal();
+                    
+                    // 重置表单
+                    form.reset();
+                });
+                
+                // 更新个人中心的孩子档案部分
+                function updateUserAccountProfileSection(formData) {
+                    // 如果在真实环境中，这里会调用API或使用本地存储保存数据
+                    // 在这个模拟环境中，我们只保存到localStorage作为演示
+                    try {
+                        // 获取现有的孩子档案列表或创建新的
+                        let childProfiles = JSON.parse(localStorage.getItem('childProfiles')) || [];
+                        
+                        // 添加新档案
+                        childProfiles.push(formData);
+                        
+                        // 存储更新后的列表
+                        localStorage.setItem('childProfiles', JSON.stringify(childProfiles));
+                        
+                        console.log('档案已保存到localStorage，如果回到用户中心页面，会显示最新添加的孩子');
+                    } catch (error) {
+                        console.error('保存档案时出错:', error);
+                    }
+                }
+                
+                // 为所有现有的删除按钮添加事件
+                document.querySelectorAll('.fa-trash-alt').forEach(btn => {
+                    btn.parentElement.addEventListener('click', function() {
+                        const profileCard = this.closest('.bg-white.rounded-xl');
+                        if (confirm('确定要删除这个档案吗？')) {
+                            profileCard.remove();
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html> 

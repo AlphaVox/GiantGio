@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>当前鞋款状态 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* 进度条样式 */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        /* 修改百分比文本样式 */
+        .percentage-text {
+            transform: rotate(90deg);
+            dominant-baseline: middle;
+            font-weight: 600;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 头部导航 -->
+        <header class="bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-30">
+            <div class="flex items-center">
+                <a href="dashboard.html" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800 ml-4">当前鞋款状态</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- 内容区域 -->
+        <div class="px-4 py-5">
+            <!-- 彩色装饰元素 -->
+            <div class="absolute top-[120px] right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse-slow opacity-40"></div>
+            <div class="absolute bottom-[240px] left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 animate-float opacity-30"></div>
+            
+            <!-- 当前鞋款信息卡片 -->
+            <div class="mb-6 animate-fade-in-up">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-shoe-prints text-primary"></i>
+                    </div>
+                    当前鞋款
+                </h2>
+                <div class="bg-white rounded-xl shadow-sm p-5 premium-shadow relative overflow-hidden">
+                    <!-- 鞋款基本信息 -->
+                    <div class="flex">
+                        <div class="w-[120px] h-[120px] bg-lightblue rounded-lg flex items-center justify-center relative">
+                            <img src="https://placehold.co/300x200/EFF6FF/4AA5FF?text=鞋款图片&font=opensans" alt="当前鞋款" class="object-contain w-[100px] h-[100px]">
+                            <div class="absolute bottom-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                                31码
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="font-bold text-gray-800 text-lg mb-1">健康成长系列跑鞋</h3>
+                            <div class="flex items-center text-sm text-gray-600 mb-2">
+                                <i class="fas fa-tag mr-2 text-primary"></i>
+                                <span>大脚科技定制款</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex items-center text-sm">
+                                    <span class="w-20 text-gray-500">购买日期:</span>
+                                    <span class="text-gray-700">2023年9月15日</span>
+                                </div>
+                                <div class="flex items-center text-sm">
+                                    <span class="w-20 text-gray-500">使用时长:</span>
+                                    <span class="text-gray-700">2个月12天</span>
+                                </div>
+                                <div class="flex items-center text-sm">
+                                    <span class="w-20 text-gray-500">适合脚长:</span>
+                                    <span class="text-gray-700">20.0-20.7cm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 磨损进度条 -->
+                    <div class="mt-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-medium text-gray-800">整体磨损程度</h4>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                <span class="text-sm text-gray-700">良好</span>
+                            </div>
+                        </div>
+                        <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="bg-green-500 h-full rounded-full" style="width: 32%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>全新</span>
+                            <span>更换提醒</span>
+                            <span>建议更换</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 各部位磨损状态 -->
+            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-chart-pie text-primary"></i>
+                    </div>
+                    局部磨损状态
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- 鞋底磨损 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex mb-3">
+                            <div class="w-12 h-12 bg-lightblue rounded-lg flex items-center justify-center">
+                                <i class="fas fa-shoe-prints text-primary text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="font-medium text-gray-800">鞋底</h3>
+                                <div class="flex items-center text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                    <span class="text-gray-700">正常磨损</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center mt-2 relative">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring__circle" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                                <circle class="progress-ring__circle" stroke="#10B981" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="175.84" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-lg font-semibold text-gray-800">30%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 鞋面磨损 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex mb-3">
+                            <div class="w-12 h-12 bg-lightpink rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tshirt text-secondary text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="font-medium text-gray-800">鞋面</h3>
+                                <div class="flex items-center text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                    <span class="text-gray-700">良好</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center mt-2 relative">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring__circle" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                                <circle class="progress-ring__circle" stroke="#10B981" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="188.4" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-lg font-semibold text-gray-800">25%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 内垫磨损 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex mb-3">
+                            <div class="w-12 h-12 bg-mint rounded-lg flex items-center justify-center">
+                                <i class="fas fa-socks text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="font-medium text-gray-800">内垫</h3>
+                                <div class="flex items-center text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
+                                    <span class="text-gray-700">中度磨损</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center mt-2 relative">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring__circle" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                                <circle class="progress-ring__circle" stroke="#F59E0B" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="125.6" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-lg font-semibold text-gray-800">50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 支撑结构 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="flex mb-3">
+                            <div class="w-12 h-12 bg-peach rounded-lg flex items-center justify-center">
+                                <i class="fas fa-cogs text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="font-medium text-gray-800">支撑结构</h3>
+                                <div class="flex items-center text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                    <span class="text-gray-700">良好</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center mt-2 relative">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring__circle" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                                <circle class="progress-ring__circle" stroke="#10B981" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" stroke-dasharray="251.2" stroke-dashoffset="200.96" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-lg font-semibold text-gray-800">20%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 使用统计 -->
+            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-chart-bar text-primary"></i>
+                    </div>
+                    使用统计
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- 使用天数 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="text-sm text-gray-500">总使用天数</div>
+                        <div class="text-2xl font-bold text-gray-800 mt-1">72 <span class="text-sm font-normal">天</span></div>
+                        <div class="flex items-center mt-1 text-xs text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>连续使用5天</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 总步数 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="text-sm text-gray-500">总步数</div>
+                        <div class="text-2xl font-bold text-gray-800 mt-1">182,476</div>
+                        <div class="flex items-center mt-1 text-xs text-gray-500">
+                            <span>平均: 2,534步/天</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 总里程 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="text-sm text-gray-500">总里程</div>
+                        <div class="text-2xl font-bold text-gray-800 mt-1">78.3 <span class="text-sm font-normal">km</span></div>
+                        <div class="flex items-center mt-1 text-xs text-gray-500">
+                            <span>平均: 1.09km/天</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 主要活动类型 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4">
+                        <div class="text-sm text-gray-500">主要活动类型</div>
+                        <div class="text-xl font-bold text-gray-800 mt-1">日常行走</div>
+                        <div class="flex items-center mt-1 text-xs text-gray-500">
+                            <span>其次: 轻度跑步</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 鞋款建议 -->
+            <div class="mb-10 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                        <i class="fas fa-lightbulb text-primary"></i>
+                    </div>
+                    专家建议
+                </h2>
+                <div class="bg-white rounded-xl shadow-sm p-4 premium-shadow">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                            <i class="fas fa-shoe-prints text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800">当前状态评估</h3>
+                            <p class="text-sm text-gray-600 mt-1">
+                                您的鞋子整体状况良好，目前磨损程度为32%，预计还可以使用4-5个月。内垫磨损较快，建议关注。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
+                            <i class="fas fa-broom text-secondary"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800">保养建议</h3>
+                            <p class="text-sm text-gray-600 mt-1">
+                                建议定期清洁鞋面，保持干燥。可考虑更换内垫以延长鞋子整体使用寿命，避免在泥泞环境中使用。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mr-3">
+                            <i class="fas fa-calendar-check text-accent"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800">下次检查提醒</h3>
+                            <p class="text-sm text-gray-600 mt-1">
+                                建议一个月后重新扫描检查鞋款状态，届时可能需要考虑更换内垫或其他保养措施。
+                            </p>
+                            <button class="mt-3 bg-primary text-white px-4 py-2 rounded-lg font-medium text-sm shadow-sm hover:bg-primary-dark transition-all flex items-center">
+                                <i class="fas fa-bell mr-2"></i>
+                                设置提醒
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+            <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-home text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+            <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">选购</span>
+            </a>
+            <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                    <i class="fas fa-shoe-prints"></i>
+                </div>
+                <span class="text-xs text-primary mt-6">足部扫描</span>
+            </a>
+            <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">我的设计</span>
+            </a>
+            <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-users text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">家庭中心</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以添加动画或交互效果
+        });
+    </script>
+</body>
+</html> 

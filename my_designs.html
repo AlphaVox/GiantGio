@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的设计 - 大脚科技</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'shine': 'shine 2s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shine: {
+                            '0%': { 'background-position': '200% center' },
+                            '100%': { 'background-position': '-200% center' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 通用动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        @keyframes rotate-3d {
+            0% { transform: rotate3d(0, 1, 0, 0deg); }
+            100% { transform: rotate3d(0, 1, 0, 360deg); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 自定义类 */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .animate-rotate-3d {
+            animation: rotate-3d 15s linear infinite;
+        }
+        
+        .animate-shine {
+            background: linear-gradient(90deg, 
+                        rgba(255,255,255,0) 0%, 
+                        rgba(255,255,255,0.8) 50%, 
+                        rgba(255,255,255,0) 100%);
+            background-size: 200% auto;
+            animation: shine 2s linear infinite;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 毛玻璃效果 */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-effect-dark {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 高级阴影效果 */
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(74, 165, 255, 0.5);
+        }
+        
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 控制溢出滚动行为 */
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f5f5f5;
+        }
+        
+        /* iPhone 15 Pro Max 样式 */
+        .iphone-frame {
+            width: 390px; /* iPhone 15 Pro Max 宽度 */
+            height: 844px; /* iPhone 15 Pro Max 高度 */
+            border-radius: 55px;
+            padding: 15px;
+            background: #1A1A1C; /* 深空黑 */
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                      0 30px 60px -30px rgba(0, 0, 0, 0.3),
+                      inset 0 -2px 6px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* 电源键 */
+        .power-button {
+            position: absolute;
+            right: -3px;
+            top: 180px;
+            width: 3px;
+            height: 80px;
+            background: #2a2a2c;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* 音量按钮 */
+        .volume-up {
+            position: absolute;
+            left: -3px;
+            top: 150px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .volume-down {
+            position: absolute;
+            left: -3px;
+            top: 220px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        /* 操作岛 */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        /* 屏幕内容 */
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 45px;
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+            overflow: auto;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+            z-index: 50;
+        }
+        
+        /* Toast通知样式 */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 设计卡片样式 */
+        .design-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .design-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .design-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s ease-out;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .design-card:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            width: calc(100% - 30px);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+        
+        /* 修改屏幕内容，确保内容不被底部导航栏遮挡 */
+        .app-content {
+            padding-bottom: 100px !important;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <!-- iPhone 15 Pro Max 框架 -->
+    <div class="iphone-frame">
+        <!-- 硬件按钮 -->
+        <div class="power-button"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        
+        <!-- 刘海/动态岛 -->
+        <div class="dynamic-island"></div>
+        
+        <!-- 屏幕内容 -->
+        <div class="screen-content overflow-auto">
+            <!-- 主要应用内容 -->
+            <div class="app-content w-full h-full overflow-y-auto overflow-x-hidden relative bg-gradient-to-b from-white to-blue-50/30 pb-24">
+                <!-- 彩色装饰元素 -->
+                <div class="absolute top-40 right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse-slow opacity-40"></div>
+                <div class="absolute bottom-80 left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/20 to-primary/10 animate-float opacity-40"></div>
+                
+                <!-- 头部区域 -->
+                <div class="px-5 pt-14 pb-3 sticky top-0 z-30 glass-effect">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-2xl font-bold text-gray-800">我的设计</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 text-primary">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 主体内容 -->
+                <div class="px-5 pt-3 pb-20">
+                    <!-- 统计信息 -->
+                    <div class="mb-6 fade-in">
+                        <p class="text-gray-500">您已保存 <span class="font-medium text-gray-800">4</span> 个设计</p>
+                    </div>
+                    
+                    <!-- 设计卡片 -->
+                    <div class="space-y-5">
+                        <!-- 设计卡片1 -->
+                        <div class="design-card rounded-xl bg-white border border-white overflow-hidden premium-shadow fade-in" style="transition-delay: 0.1s;">
+                            <div class="flex">
+                                <!-- 鞋子图片 -->
+                                <div class="w-1/3 h-32 bg-lightblue flex items-center justify-center p-3">
+                                    <div class="relative w-full h-full">
+                                        <svg width="100%" height="100%" viewBox="0 0 250 250" class="transform -rotate-12 animate-float">
+                                            <path d="M60,170 C80,180 150,180 190,170 C200,165 205,155 200,140 C195,125 190,110 170,100 C150,90 120,85 90,95 C60,105 50,120 45,140 C40,160 50,165 60,170 Z" 
+                                              fill="#4AA5FF" opacity="0.9"></path>
+                                            <path d="M65,145 C75,135 90,120 110,110 C130,100 150,95 170,105 C190,115 195,135 190,150 C185,165 90,170 65,145 Z" 
+                                              fill="#FFFFFF"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <!-- 详情 -->
+                                <div class="w-2/3 p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">蓝色星辰</h3>
+                                            <p class="text-xs text-gray-500 mt-1">保存于 2023/12/21</p>
+                                        </div>
+                                        <div class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                            未下单
+                                        </div>
+                                    </div>
+                                    <div class="flex mt-3 space-x-2">
+                                        <a href="3d_preview.html" class="flex-1 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium text-center">
+                                            预览
+                                        </a>
+                                        <a href="shoe_customization.html" class="flex-1 py-1.5 rounded-full bg-primary text-white text-xs font-medium text-center">
+                                            编辑
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 设计卡片2 -->
+                        <div class="design-card rounded-xl bg-white border border-white overflow-hidden premium-shadow fade-in" style="transition-delay: 0.2s;">
+                            <div class="flex">
+                                <!-- 鞋子图片 -->
+                                <div class="w-1/3 h-32 bg-lightpink flex items-center justify-center p-3">
+                                    <div class="relative w-full h-full">
+                                        <svg width="100%" height="100%" viewBox="0 0 250 250" class="transform -rotate-12 animate-float">
+                                            <path d="M60,170 C80,180 150,180 190,170 C200,165 205,155 200,140 C195,125 190,110 170,100 C150,90 120,85 90,95 C60,105 50,120 45,140 C40,160 50,165 60,170 Z" 
+                                              fill="#FF9AA2" opacity="0.9"></path>
+                                            <path d="M65,145 C75,135 90,120 110,110 C130,100 150,95 170,105 C190,115 195,135 190,150 C185,165 90,170 65,145 Z" 
+                                              fill="#FFFFFF"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <!-- 详情 -->
+                                <div class="w-2/3 p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">粉色梦境</h3>
+                                            <p class="text-xs text-gray-500 mt-1">保存于 2023/12/18</p>
+                                        </div>
+                                        <div class="bg-green-500/10 text-green-500 text-xs px-2 py-1 rounded-full">
+                                            已下单
+                                        </div>
+                                    </div>
+                                    <div class="flex mt-3 space-x-2">
+                                        <a href="3d_preview.html" class="flex-1 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium text-center">
+                                            预览
+                                        </a>
+                                        <a href="shoe_customization.html" class="flex-1 py-1.5 rounded-full bg-primary text-white text-xs font-medium text-center">
+                                            编辑
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 设计卡片3 -->
+                        <div class="design-card rounded-xl bg-white border border-white overflow-hidden premium-shadow fade-in" style="transition-delay: 0.3s;">
+                            <div class="flex">
+                                <!-- 鞋子图片 -->
+                                <div class="w-1/3 h-32 bg-peach flex items-center justify-center p-3">
+                                    <div class="relative w-full h-full">
+                                        <svg width="100%" height="100%" viewBox="0 0 250 250" class="transform -rotate-12 animate-float">
+                                            <path d="M60,170 C80,180 150,180 190,170 C200,165 205,155 200,140 C195,125 190,110 170,100 C150,90 120,85 90,95 C60,105 50,120 45,140 C40,160 50,165 60,170 Z" 
+                                              fill="#FFD966" opacity="0.9"></path>
+                                            <path d="M65,145 C75,135 90,120 110,110 C130,100 150,95 170,105 C190,115 195,135 190,150 C185,165 90,170 65,145 Z" 
+                                              fill="#FFFFFF"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <!-- 详情 -->
+                                <div class="w-2/3 p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">阳光精灵</h3>
+                                            <p class="text-xs text-gray-500 mt-1">保存于 2023/12/15</p>
+                                        </div>
+                                        <div class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                            未下单
+                                        </div>
+                                    </div>
+                                    <div class="flex mt-3 space-x-2">
+                                        <a href="3d_preview.html" class="flex-1 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium text-center">
+                                            预览
+                                        </a>
+                                        <a href="shoe_customization.html" class="flex-1 py-1.5 rounded-full bg-primary text-white text-xs font-medium text-center">
+                                            编辑
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 设计卡片4 -->
+                        <div class="design-card rounded-xl bg-white border border-white overflow-hidden premium-shadow fade-in" style="transition-delay: 0.4s;">
+                            <div class="flex">
+                                <!-- 鞋子图片 -->
+                                <div class="w-1/3 h-32 bg-mint flex items-center justify-center p-3">
+                                    <div class="relative w-full h-full">
+                                        <svg width="100%" height="100%" viewBox="0 0 250 250" class="transform -rotate-12 animate-float">
+                                            <path d="M60,170 C80,180 150,180 190,170 C200,165 205,155 200,140 C195,125 190,110 170,100 C150,90 120,85 90,95 C60,105 50,120 45,140 C40,160 50,165 60,170 Z" 
+                                              fill="#10B981" opacity="0.9"></path>
+                                            <path d="M65,145 C75,135 90,120 110,110 C130,100 150,95 170,105 C190,115 195,135 190,150 C185,165 90,170 65,145 Z" 
+                                              fill="#FFFFFF"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <!-- 详情 -->
+                                <div class="w-2/3 p-4">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">森林探险</h3>
+                                            <p class="text-xs text-gray-500 mt-1">保存于 2023/12/10</p>
+                                        </div>
+                                        <div class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                            未下单
+                                        </div>
+                                    </div>
+                                    <div class="flex mt-3 space-x-2">
+                                        <a href="3d_preview.html" class="flex-1 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium text-center">
+                                            预览
+                                        </a>
+                                        <a href="shoe_customization.html" class="flex-1 py-1.5 rounded-full bg-primary text-white text-xs font-medium text-center">
+                                            编辑
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 新建设计卡片 -->
+                        <div class="design-card rounded-xl bg-white border border-dashed border-gray-300 overflow-hidden fade-in" style="transition-delay: 0.5s;">
+                            <a href="shoe_selection.html" class="flex flex-col items-center justify-center py-12 hover:bg-gray-50 transition-colors">
+                                <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                    <i class="fas fa-plus text-primary text-xl"></i>
+                                </div>
+                                <p class="text-gray-700 font-medium">创建新设计</p>
+                                <p class="text-xs text-gray-500 mt-1">开始一个全新的鞋款定制</p>
+                            </a>
+                        </div>
+                        
+                        <!-- 空状态（默认隐藏） -->
+                        <div class="hidden flex flex-col items-center justify-center py-10 fade-in">
+                            <div class="w-24 h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-shoe-prints text-gray-300 text-3xl"></i>
+                            </div>
+                            <h3 class="text-gray-500 font-medium mb-2">暂无保存的设计</h3>
+                            <p class="text-gray-400 text-sm text-center mb-6">您还没有保存任何鞋款设计，快去创建吧！</p>
+                            <a href="shoe_selection.html" class="px-6 py-2 rounded-full bg-primary text-white font-medium">
+                                开始设计
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部导航栏 -->
+                <div class="bottom-nav">
+                    <div class="flex justify-around items-center">
+                        <a href="dashboard.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-home text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">首页</span>
+                        </a>
+                        
+                        <a href="shoe_selection.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-shopping-bag text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">选购</span>
+                        </a>
+                        
+                        <a href="foot_scan.html" class="flex flex-col items-center relative -mt-6">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-shoe-prints text-2xl"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-700 font-medium">足部扫描</span>
+                        </a>
+                        
+                        <a href="my_designs.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-primary">
+                                <i class="fas fa-tshirt text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-700 font-medium">我的设计</span>
+                        </a>
+                        
+                        <a href="family_center.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-user text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">家庭中心</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+    
+    <!-- Toast通知 -->
+    <div id="toast" class="toast">提示信息</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加淡入效果
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('show');
+                }, index * 100);
+            });
+            
+            // 显示提示信息
+            function showToast(message, duration = 2000) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+            
+            // 模拟点击设计卡片的效果
+            const designCards = document.querySelectorAll('.design-card');
+            designCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 只有在不是点击按钮的情况下才跳转
+                    if (!e.target.closest('a') && !e.target.closest('button') && !this.querySelector('a[href="shoe_selection.html"]')) {
+                        const previewLink = this.querySelector('a[href="3d_preview.html"]');
+                        if (previewLink) {
+                            window.location.href = previewLink.getAttribute('href');
+                        }
+                    }
+                });
+            });
+            
+            // 为按钮添加波纹效果
+            const buttons = document.querySelectorAll('button, a.flex-1');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('absolute', 'w-0', 'h-0', 'rounded-full', 'bg-white', 'opacity-30');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.classList.add('w-[100px]', 'h-[100px]', 'transition-all', 'duration-500', 'ease-out');
+                    }, 0);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 500);
+                });
+            });
+            
+            // 欢迎提示
+            setTimeout(() => {
+                showToast('查看您的鞋款设计');
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

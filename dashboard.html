@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>首页 - 大脚科技</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'bounce-small': 'bounceSmall 2s infinite',
+                        'pulse-slow': 'pulseSlow 3s infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        bounceSmall: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.7 }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 通用动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 自定义类 */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-shine {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shine 3s infinite;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 毛玻璃效果 */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .glass-effect-dark {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 高级阴影效果 */
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(74, 165, 255, 0.5);
+        }
+        
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 控制溢出滚动行为 */
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f5f5f5;
+        }
+        
+        /* iPhone 15 Pro Max 样式 */
+        .iphone-frame {
+            width: 390px; /* iPhone 15 Pro Max 宽度 */
+            height: 844px; /* iPhone 15 Pro Max 高度 */
+            border-radius: 55px;
+            padding: 15px;
+            background: #1A1A1C; /* 深空黑 */
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                      0 30px 60px -30px rgba(0, 0, 0, 0.3),
+                      inset 0 -2px 6px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* 电源键 */
+        .power-button {
+            position: absolute;
+            right: -3px;
+            top: 180px;
+            width: 3px;
+            height: 80px;
+            background: #2a2a2c;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* 音量按钮 */
+        .volume-up {
+            position: absolute;
+            left: -3px;
+            top: 150px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .volume-down {
+            position: absolute;
+            left: -3px;
+            top: 220px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        /* 操作岛 */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            z-index: 100;
+        }
+        
+        /* 屏幕内容 */
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 45px;
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+            z-index: 50;
+        }
+        
+        /* Toast通知样式 */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 圆环进度条样式 */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-linecap: round;
+        }
+        
+        /* 功能卡片样式 */
+        .feature-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s ease-out;
+        }
+        
+        .feature-card:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            width: calc(100% - 30px);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+        
+        /* 修改屏幕内容，确保内容不被底部导航栏遮挡 */
+        .app-content {
+            padding-bottom: 120px !important;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <!-- iPhone 15 Pro Max 框架 -->
+    <div class="iphone-frame">
+        <!-- 硬件按钮 -->
+        <div class="power-button"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        
+        <!-- 刘海/动态岛 -->
+        <div class="dynamic-island"></div>
+        
+        <!-- 屏幕内容 -->
+        <div class="screen-content overflow-auto">
+            <!-- 主要应用内容 -->
+            <div class="app-content w-full h-full overflow-y-auto overflow-x-hidden relative bg-gradient-to-b from-white to-blue-50/30 pb-24">
+                <!-- 头部区域 -->
+                <div class="px-5 pt-14 pb-3 sticky top-0 z-30 glass-effect">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-md">
+                                <div class="text-white font-bold text-xs">大脚</div>
+                            </div>
+                            <h1 class="ml-3 text-xl font-bold text-gray-800">首页</h1>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm">
+                                <i class="fas fa-bell"></i>
+                            </button>
+                            <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm">
+                                <i class="fas fa-user"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 彩色装饰元素 -->
+                <div class="absolute top-40 right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse-slow opacity-40"></div>
+                <div class="absolute bottom-80 left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/20 to-primary/10 animate-float opacity-40"></div>
+                
+                <!-- 主体内容 -->
+                <div class="px-5 pt-3 pb-20">
+                    <!-- 当前鞋款状态 -->
+                    <div class="mb-6 fade-in">
+                        <div class="relative p-5 rounded-2xl overflow-hidden bg-white premium-shadow">
+                            <!-- 淡色渐变背景 -->
+                            <div class="absolute inset-0 z-0 bg-gradient-to-tr from-lightblue to-lightpink/30"></div>
+                            
+                            <div class="relative z-10 flex">
+                                <!-- 左侧鞋子3D模型 -->
+                                <div class="w-24 h-24 mr-4 relative">
+                                    <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                         class="w-full h-full object-cover rounded-lg shadow-md animate-float" 
+                                         alt="当前鞋款">
+                                    <div class="absolute top-2 right-2 w-3 h-3 rounded-full bg-green-500 ring-2 ring-white"></div>
+                                </div>
+                                
+                                <!-- 右侧信息 -->
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h2 class="text-base font-bold text-gray-800">阳光款 3D童鞋</h2>
+                                            <p class="text-xs text-gray-500 mt-1">已使用时间：32天</p>
+                                        </div>
+                                        <div class="ml-auto">
+                                            <!-- 圆环进度条 -->
+                                            <div class="relative w-14 h-14 flex items-center justify-center">
+                                                <svg class="w-14 h-14" viewBox="0 0 36 36">
+                                                    <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="rgba(0,0,0,0.1)"></circle>
+                                                    <circle class="progress-ring-circle" cx="18" cy="18" r="16" fill="none" stroke-width="2.5" stroke="url(#progressGradient)" stroke-dasharray="100" stroke-dashoffset="30"></circle>
+                                                    <defs>
+                                                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                            <stop offset="0%" stop-color="#4AA5FF" />
+                                                            <stop offset="100%" stop-color="#FF9AA2" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                </svg>
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    <span class="text-xs font-medium text-gray-800">70%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-2">
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="text-gray-500">预计剩余使用时间</span>
+                                            <span class="text-gray-800 font-medium">约14天</span>
+                                        </div>
+                                        <div class="mt-3 flex">
+                                            <button class="px-3 py-1.5 text-xs font-medium rounded-full bg-primary/10 text-primary">
+                                                查看详情
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 核心功能导航 -->
+                    <div class="mb-8 fade-in" style="transition-delay: 0.1s;">
+                        <h2 class="text-lg font-bold mb-4 text-gray-800">核心功能</h2>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- 足部扫描 -->
+                            <a href="foot_scan.html" class="feature-card block p-4 rounded-2xl bg-lightblue relative overflow-hidden shadow-md">
+                                <div class="absolute -bottom-2 -right-2 w-20 h-20 opacity-10">
+                                    <i class="fas fa-scanner-gun text-4xl text-primary"></i>
+                                </div>
+                                <div class="relative z-10">
+                                    <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                                        <i class="fas fa-shoe-prints text-primary text-xl"></i>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-800">足部扫描</h3>
+                                    <p class="mt-1 text-xs text-gray-500">3D建模精确测量</p>
+                                </div>
+                            </a>
+                            
+                            <!-- 鞋款选配 -->
+                            <a href="shoe_selection.html" class="feature-card block p-4 rounded-2xl bg-lightpink relative overflow-hidden shadow-md">
+                                <div class="absolute -bottom-2 -right-2 w-20 h-20 opacity-10">
+                                    <i class="fas fa-pencil-ruler text-4xl text-secondary"></i>
+                                </div>
+                                <div class="relative z-10">
+                                    <div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                                        <i class="fas fa-paint-brush text-secondary text-xl"></i>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-800">鞋款选配</h3>
+                                    <p class="mt-1 text-xs text-gray-500">个性化定制设计</p>
+                                </div>
+                            </a>
+                            
+                            <!-- 成长记录 -->
+                            <a href="growth_record.html" class="feature-card block p-4 rounded-2xl bg-peach relative overflow-hidden shadow-md">
+                                <div class="absolute -bottom-2 -right-2 w-20 h-20 opacity-10">
+                                    <i class="fas fa-chart-line text-4xl text-orange-400"></i>
+                                </div>
+                                <div class="relative z-10">
+                                    <div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                                        <i class="fas fa-child text-orange-400 text-xl"></i>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-800">成长记录</h3>
+                                    <p class="mt-1 text-xs text-gray-500">足部发育跟踪</p>
+                                </div>
+                            </a>
+                            
+                            <!-- 订单记录 -->
+                            <a href="#" class="feature-card block p-4 rounded-2xl bg-lilac relative overflow-hidden shadow-md">
+                                <div class="absolute -bottom-2 -right-2 w-20 h-20 opacity-10">
+                                    <i class="fas fa-box text-4xl text-purple-500"></i>
+                                </div>
+                                <div class="relative z-10">
+                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4">
+                                        <i class="fas fa-clipboard-list text-purple-500 text-xl"></i>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-800">订单记录</h3>
+                                    <p class="mt-1 text-xs text-gray-500">查看历史订单</p>
+                                </div>
+                            </a>
+                            
+                            <!-- 家庭中心 -->
+                            <a href="family_center.html" class="feature-card block p-4 rounded-2xl bg-lilac relative overflow-hidden shadow-md">
+                                <div class="flex items-center">
+                                    <img src="https://placehold.co/60x60/F3E8FF/6B46C1?text=👪" alt="家庭中心图标" class="w-10 h-10 rounded-full">
+                                    <div class="ml-3">
+                                        <h3 class="font-medium text-gray-800 text-sm">家庭中心</h3>
+                                        <p class="text-xs text-gray-500">管理家庭成员足部健康</p>
+                                    </div>
+                                </div>
+                                <div class="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-lilac to-transparent"></div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 增长数据卡片 -->
+                    <div class="mb-8 fade-in" style="transition-delay: 0.2s;">
+                        <h2 class="text-lg font-bold mb-4 text-gray-800">增长数据</h2>
+                        
+                        <div class="p-5 rounded-2xl bg-white relative overflow-hidden premium-shadow">
+                            <div class="absolute inset-0 z-0 bg-gradient-to-tr from-[#4AA5FF]/5 to-[#FFD966]/5"></div>
+                            
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div>
+                                        <h3 class="text-base font-medium text-gray-800">足部生长曲线</h3>
+                                        <p class="mt-1 text-xs text-gray-500">过去6个月</p>
+                                    </div>
+                                    <button class="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                                        详情
+                                    </button>
+                                </div>
+                                
+                                <!-- 图表区域 -->
+                                <div class="h-32 mt-2 flex items-end space-x-2">
+                                    <div class="flex-grow relative">
+                                        <!-- 模拟数据点 -->
+                                        <div class="absolute bottom-0 left-0 w-full h-full flex items-end justify-between px-1">
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[30%]"></div>
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[40%]"></div>
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[45%]"></div>
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[50%]"></div>
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[65%]"></div>
+                                            <div class="w-2 bg-gradient-to-t from-primary to-secondary rounded-t h-[75%]"></div>
+                                        </div>
+                                        
+                                        <!-- 模拟连线 -->
+                                        <svg class="absolute inset-0 w-full h-full z-10" viewBox="0 0 100 32">
+                                            <path 
+                                                d="M1,22.4 C1,22.4 16.5,19.2 33,17.6 C49.5,16 66,9.6 83,8" 
+                                                fill="none" 
+                                                stroke="url(#lineGradient)" 
+                                                stroke-width="1.2" 
+                                                stroke-linecap="round">
+                                            </path>
+                                            <defs>
+                                                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="0%" stop-color="#4AA5FF" />
+                                                    <stop offset="100%" stop-color="#FF9AA2" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                        
+                                        <!-- 动画指示点 -->
+                                        <div class="absolute bottom-[75%] right-[5px] h-3 w-3 rounded-full bg-white border-2 border-secondary animate-pulse-slow"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 数据标签 -->
+                                <div class="flex justify-between mt-2 text-xs text-gray-500">
+                                    <span>1月</span>
+                                    <span>2月</span>
+                                    <span>3月</span>
+                                    <span>4月</span>
+                                    <span>5月</span>
+                                    <span>6月</span>
+                                </div>
+                                
+                                <!-- 小数据卡片 -->
+                                <div class="flex justify-between mt-4">
+                                    <div class="flex-1 p-3 rounded-xl bg-gray-50 mr-3 glass-effect">
+                                        <p class="text-xs text-gray-500">增长速度</p>
+                                        <p class="text-base font-medium text-gray-800">+7.5%</p>
+                                    </div>
+                                    <div class="flex-1 p-3 rounded-xl bg-gray-50 glass-effect">
+                                        <p class="text-xs text-gray-500">同龄对比</p>
+                                        <p class="text-base font-medium text-gray-800">Top 15%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 最新动态或提示 -->
+                    <div class="mb-20 fade-in" style="transition-delay: 0.3s;">
+                        <div class="p-4 rounded-2xl bg-gradient-to-r from-lightblue to-white premium-shadow border border-white">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-bell text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800 mb-1">提醒</h4>
+                                    <p class="text-sm text-gray-600">
+                                        您的宝贝需要进行新一轮的足部扫描了，以确保穿着合适的鞋子。
+                                    </p>
+                                    <button class="mt-3 px-4 py-1.5 text-xs font-medium rounded-full bg-primary text-white shadow-sm">
+                                        立即扫描
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 底部导航栏 -->
+                <div class="bottom-nav">
+                    <div class="flex justify-around items-center">
+                        <a href="dashboard.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-primary">
+                                <i class="fas fa-home text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-700 font-medium">首页</span>
+                        </a>
+                        
+                        <a href="shoe_selection.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-shopping-bag text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">选购</span>
+                        </a>
+                        
+                        <a href="foot_scan.html" class="flex flex-col items-center relative -mt-6">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-shoe-prints text-2xl"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-700 font-medium">足部扫描</span>
+                        </a>
+                        
+                        <a href="my_designs.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-tshirt text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">我的设计</span>
+                        </a>
+                        
+                        <a href="family_center.html" class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                                <i class="fas fa-user text-lg"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-500">家庭中心</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+    
+    <!-- Toast通知 -->
+    <div id="toast" class="toast">提示信息</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加淡入效果
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('show');
+                }, index * 100);
+            });
+            
+            // 显示提示信息
+            function showToast(message, duration = 2000) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+            
+            // 为功能卡片添加点击事件
+            const functionCards = document.querySelectorAll('.grid a');
+            functionCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    const cardTitle = this.querySelector('h3').textContent;
+                    
+                    // 足部扫描和鞋款选配功能已实现页面
+                    if (cardTitle !== '足部扫描' && cardTitle !== '鞋款选配' && cardTitle !== '成长记录') {
+                        e.preventDefault();
+                        showToast(`${cardTitle}功能即将上线`);
+                    }
+                });
+            });
+            
+            // 为按钮添加波纹效果
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('absolute', 'w-0', 'h-0', 'rounded-full', 'bg-white', 'opacity-30');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.classList.add('w-[100px]', 'h-[100px]', 'transition-all', 'duration-500', 'ease-out');
+                    }, 0);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 500);
+                });
+            });
+            
+            // 欢迎提示
+            setTimeout(() => {
+                showToast('欢迎回来！');
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

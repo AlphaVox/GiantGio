@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大脚科技 - 九宫格预览</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 字体和图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .page-frame {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .page-frame:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #4AA5FF;
+        }
+        
+        .user-flow-arrow {
+            position: absolute;
+            color: #4AA5FF;
+            font-size: 24px;
+            z-index: 10;
+            transform: translateY(-50%);
+        }
+        
+        .user-flow-container {
+            position: relative;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .user-flow-step {
+            display: inline-block;
+            margin-right: 80px;
+            position: relative;
+        }
+        
+        .user-flow-step:not(:last-child)::after {
+            content: "→";
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4AA5FF;
+            font-size: 24px;
+        }
+        
+        .page-container {
+            transition: transform 0.3s ease;
+        }
+        
+        .page-container:hover {
+            transform: scale(1.03);
+        }
+        
+        iframe {
+            pointer-events: none;
+            background-color: white;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        
+        .iframe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .preview-btn {
+            background-color: rgba(74, 165, 255, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+            font-weight: 500;
+        }
+        
+        .iframe-overlay:hover .preview-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    <header class="max-w-7xl mx-auto mb-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">大脚科技 - 应用界面预览</h1>
+            <div class="flex items-center space-x-2 text-primary">
+                <i class="fas fa-child text-2xl"></i>
+                <span class="text-xl font-medium">儿童智能鞋应用</span>
+            </div>
+        </div>
+        <p class="text-gray-600 mt-2">全部页面预览及用户流程</p>
+    </header>
+    
+    <!-- 用户流程图 -->
+    <section class="max-w-7xl mx-auto mb-12 bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">用户流程示意图</h2>
+        <div class="user-flow-container">
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-door-open text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">欢迎页</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-home text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">首页</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-shoe-prints text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">足部扫描</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">扫描结果</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-shopping-bag text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">鞋款选择</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-palette text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">鞋款定制</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-clipboard-check text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">订单确认</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-flow-step">
+                <div class="bg-primary/10 p-3 rounded-lg">
+                    <div class="w-32 h-24 bg-white rounded shadow-sm flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-credit-card text-primary text-xl mb-1"></i>
+                            <p class="text-xs font-medium">支付</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 mt-8">
+            <div class="flex items-center bg-blue-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-primary mr-2"></div>
+                <span class="text-xs">主流程</span>
+            </div>
+            <div class="flex items-center bg-green-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                <span class="text-xs">我的设计</span>
+            </div>
+            <div class="flex items-center bg-purple-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                <span class="text-xs">成长记录</span>
+            </div>
+            <div class="flex items-center bg-orange-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+                <span class="text-xs">订单管理</span>
+            </div>
+            <div class="flex items-center bg-pink-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
+                <span class="text-xs">客户服务</span>
+            </div>
+            <div class="flex items-center bg-yellow-50 py-1 px-3 rounded-full">
+                <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                <span class="text-xs">个人中心</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页面九宫格 -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 欢迎页 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-door-open text-primary mr-2"></i>
+                欢迎页
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="welcome.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="welcome.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 首页 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-home text-primary mr-2"></i>
+                首页
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="dashboard.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="dashboard.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 足部扫描 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-shoe-prints text-primary mr-2"></i>
+                足部扫描
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="foot_scan.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="foot_scan.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 扫描结果 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-chart-line text-primary mr-2"></i>
+                扫描结果
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="scan_result.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="scan_result.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 鞋款选择 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-shopping-bag text-primary mr-2"></i>
+                鞋款选择
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="shoe_selection.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="shoe_selection.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 鞋款定制 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-palette text-primary mr-2"></i>
+                鞋款定制
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="shoe_customize.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="shoe_customize.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3D预览 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-cube text-primary mr-2"></i>
+                3D预览
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="3d_preview.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="3d_preview.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 我的设计 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-tshirt text-green-500 mr-2"></i>
+                我的设计
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="my_designs.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="my_designs.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 订单确认 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-clipboard-check text-orange-500 mr-2"></i>
+                订单确认
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="order_confirm.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="order_confirm.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 支付页面 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-credit-card text-orange-500 mr-2"></i>
+                支付
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="payment.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="payment.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 订单详情 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-file-invoice text-orange-500 mr-2"></i>
+                订单详情
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="order_details.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="order_details.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 物流跟踪 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-truck text-orange-500 mr-2"></i>
+                物流跟踪
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="logistics_tracking.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="logistics_tracking.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 鞋子状态 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-shoe-prints text-orange-500 mr-2"></i>
+                鞋子状态
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="shoe_status.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="shoe_status.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 成长记录 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-chart-line text-purple-500 mr-2"></i>
+                成长记录
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="growth_record.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="growth_record.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 儿童档案 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-child text-yellow-500 mr-2"></i>
+                儿童档案
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="child_profiles.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="child_profiles.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 用户中心 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-user text-yellow-500 mr-2"></i>
+                用户中心
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="user_account.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="user_account.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 客户服务 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-headset text-pink-500 mr-2"></i>
+                客户服务
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="customer_service.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="customer_service.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 家庭中心 -->
+        <div class="page-container relative">
+            <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                <i class="fas fa-home text-yellow-500 mr-2"></i>
+                家庭中心
+            </h3>
+            <div class="page-frame bg-white aspect-[9/16] relative">
+                <iframe src="family_center.html" frameborder="0" loading="lazy"></iframe>
+                <div class="iframe-overlay">
+                    <a href="family_center.html" target="_blank" class="preview-btn">
+                        <i class="fas fa-external-link-alt mr-1"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="max-w-7xl mx-auto mt-16 border-t pt-8 pb-16 text-center text-gray-500">
+        <p>© 2023 大脚科技 - 儿童智能鞋应用界面</p>
+        <p class="mt-2 text-sm">为儿童足部健康与成长保驾护航</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 让iframe在页面加载完成后可以被加载
+            const iframes = document.querySelectorAll('iframe');
+            setTimeout(() => {
+                iframes.forEach(iframe => {
+                    iframe.setAttribute('src', iframe.getAttribute('src'));
+                });
+            }, 500);
+            
+            // 点击预览按钮时在新窗口打开页面
+            const previewBtns = document.querySelectorAll('.preview-btn');
+            previewBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.open(this.getAttribute('href'), '_blank');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>成长记录 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 时间线样式 */
+        .timeline-container {
+            position: relative;
+        }
+        
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 24px;
+            height: 100%;
+            width: 2px;
+            background: #EFF6FF;
+            z-index: 0;
+        }
+        
+        .timeline-item {
+            padding-left: 40px;
+            position: relative;
+            z-index: 1;
+            padding-bottom: 25px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #4AA5FF;
+            z-index: 1;
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        html, body {
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #fff;
+        }
+        
+        /* 确保内容底部有足够空间，不被底部导航栏遮挡 */
+        .relative.w-full.h-full {
+            padding-bottom: 80px;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
+    <!-- 手机模拟器 -->
+    <div class="relative w-[375px] h-[812px] mx-auto my-10 rounded-[50px] overflow-hidden bg-light shadow-2xl border-4 border-gray-200">
+        <!-- 底部指示条 -->
+        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-[140px] h-[5px] bg-gray-300 rounded-full z-50"></div>
+        
+        <!-- 主屏幕内容 -->
+        <div class="relative w-full h-full overflow-y-auto overflow-x-hidden bg-gradient-to-b from-white to-blue-50/30">
+            <!-- 头部导航 -->
+            <header class="bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-30">
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 mr-4 shadow-md hover:shadow-lg transition-all">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="text-xl font-bold text-gray-800">成长记录</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                        <i class="fas fa-calendar-alt"></i>
+                    </button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="px-4 py-5 pb-24">
+                <!-- 彩色装饰元素 -->
+                <div class="absolute top-[120px] right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse-slow opacity-40"></div>
+                <div class="absolute bottom-[240px] left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 animate-float opacity-30"></div>
+                
+                <!-- 成长数据概览卡片 -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-child text-primary"></i>
+                        </div>
+                        最新数据
+                    </h2>
+                    <div class="overflow-x-auto scrollbar-hide -mx-4 px-4">
+                        <div class="flex space-x-4 pb-2">
+                            <!-- 脚长卡片 -->
+                            <div class="flex-shrink-0 w-40 p-4 bg-white rounded-xl shadow-sm premium-shadow">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-sm text-gray-500">脚长</div>
+                                        <div class="text-xl font-bold text-gray-800 mt-1">20.5 <span class="text-sm font-normal">cm</span></div>
+                                    </div>
+                                    <div class="flex items-center bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        2.4%
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500">相当于鞋码：<span class="font-medium text-gray-700">31码</span></div>
+                            </div>
+                            
+                            <!-- 脚宽卡片 -->
+                            <div class="flex-shrink-0 w-40 p-4 bg-white rounded-xl shadow-sm">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-sm text-gray-500">脚宽</div>
+                                        <div class="text-xl font-bold text-gray-800 mt-1">8.2 <span class="text-sm font-normal">cm</span></div>
+                                    </div>
+                                    <div class="flex items-center bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded-full">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        1.8%
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500">标准宽度：<span class="font-medium text-gray-700">C/D</span></div>
+                            </div>
+                            
+                            <!-- 足弓高度卡片 -->
+                            <div class="flex-shrink-0 w-40 p-4 bg-white rounded-xl shadow-sm">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-sm text-gray-500">足弓高度</div>
+                                        <div class="text-xl font-bold text-gray-800 mt-1">3.1 <span class="text-sm font-normal">cm</span></div>
+                                    </div>
+                                    <div class="flex items-center bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded-full">
+                                        <i class="fas fa-check text-xs mr-1"></i>
+                                        正常
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500">足弓状态：<span class="font-medium text-gray-700">健康</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 成长曲线图 -->
+                <div class="mb-6 bg-white rounded-xl shadow-sm p-4 premium-shadow animate-fade-in-up">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                                <i class="fas fa-chart-line text-primary"></i>
+                            </div>
+                            成长曲线
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">脚长</button>
+                            <button class="text-xs bg-gray-100 text-gray-500 px-3 py-1 rounded-full">脚宽</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                    <div class="flex justify-center mt-2 text-xs text-gray-500">
+                        <div class="flex items-center mr-4">
+                            <div class="w-3 h-3 rounded-full bg-primary/80 mr-1"></div>
+                            <span>实际数据</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-gray-300 mr-1"></div>
+                            <span>同龄平均</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 成长里程碑 -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-flag text-primary"></i>
+                        </div>
+                        成长里程碑
+                    </h2>
+                    <div class="timeline-container">
+                        <!-- 里程碑1 -->
+                        <div class="timeline-item animate-fade-in-up" style="animation-delay: 0.1s;">
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between mb-1">
+                                    <h3 class="font-medium text-gray-800">首次扫描记录</h3>
+                                    <span class="text-xs text-gray-500">3个月前</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">记录了首次足部扫描数据，脚长18.7cm</p>
+                                <div class="flex space-x-2">
+                                    <span class="bg-lightblue text-primary text-xs px-2 py-1 rounded-full">初始数据</span>
+                                    <span class="bg-lightpink text-secondary text-xs px-2 py-1 rounded-full">28码</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 里程碑2 -->
+                        <div class="timeline-item animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between mb-1">
+                                    <h3 class="font-medium text-gray-800">成长加速期</h3>
+                                    <span class="text-xs text-gray-500">2个月前</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">一个月内脚长增加了0.8cm，进入快速成长期</p>
+                                <div class="flex space-x-2">
+                                    <span class="bg-mint text-green-600 text-xs px-2 py-1 rounded-full">快速增长</span>
+                                    <span class="bg-lightpink text-secondary text-xs px-2 py-1 rounded-full">换鞋提醒</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 里程碑3 -->
+                        <div class="timeline-item animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between mb-1">
+                                    <h3 class="font-medium text-gray-800">足弓形成</h3>
+                                    <span class="text-xs text-gray-500">上个月</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">足弓逐渐形成，高度达到2.8cm，属于正常范围</p>
+                                <div class="flex space-x-2">
+                                    <span class="bg-mint text-green-600 text-xs px-2 py-1 rounded-full">足部健康</span>
+                                    <span class="bg-peach text-orange-600 text-xs px-2 py-1 rounded-full">重要发育</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 里程碑4 -->
+                        <div class="timeline-item animate-fade-in-up" style="animation-delay: 0.4s;">
+                            <div class="bg-white rounded-xl shadow-sm p-4">
+                                <div class="flex justify-between mb-1">
+                                    <h3 class="font-medium text-gray-800">最新扫描记录</h3>
+                                    <span class="text-xs text-gray-500">今天</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">脚长达到20.5cm，适合穿31码的鞋子</p>
+                                <div class="flex space-x-2">
+                                    <span class="bg-lightblue text-primary text-xs px-2 py-1 rounded-full">最新数据</span>
+                                    <span class="bg-lightpink text-secondary text-xs px-2 py-1 rounded-full">31码</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 成长建议 -->
+                <div class="mb-10">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
+                            <i class="fas fa-lightbulb text-primary"></i>
+                        </div>
+                        成长建议
+                    </h2>
+                    <div class="bg-white rounded-xl shadow-sm p-4 premium-shadow">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                                <i class="fas fa-shoe-prints text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-800">鞋子选择建议</h3>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    根据最新测量数据，建议选择31码的鞋子，并确保鞋子宽度适中，以提供足够的支撑和成长空间。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
+                                <i class="fas fa-running text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-800">活动建议</h3>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    现阶段孩子足部正处于快速发育期，建议增加户外活动，如跑步、跳绳等，有助于促进足部肌肉发育和骨骼成长。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mr-3">
+                                <i class="fas fa-calendar-check text-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-800">下次检测提醒</h3>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    建议一个月后再次进行足部扫描，持续追踪孩子的足部成长情况，及时调整鞋码和护理方案。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部导航栏 -->
+            <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+                <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-home text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">首页</span>
+                </a>
+                <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">选购</span>
+                </a>
+                <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                    <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                        <i class="fas fa-shoe-prints"></i>
+                    </div>
+                    <span class="text-xs text-primary mt-6">足部扫描</span>
+                </a>
+                <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">我的设计</span>
+                </a>
+                <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                    <i class="fas fa-users text-gray-400 mb-1"></i>
+                    <span class="text-xs text-gray-400">家庭中心</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 图表初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            // 使用细线条绘制成长曲线图
+            const growthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['6月', '7月', '8月', '9月', '今天'],
+                    datasets: [
+                        {
+                            label: '实际脚长 (cm)',
+                            data: [18.7, 19.2, 19.6, 20.1, 20.5],
+                            borderColor: 'rgba(74, 165, 255, 0.8)',
+                            backgroundColor: 'rgba(74, 165, 255, 0.1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'white',
+                            pointBorderColor: 'rgba(74, 165, 255, 0.8)',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '同龄平均 (cm)',
+                            data: [18.5, 19.0, 19.3, 19.8, 20.2],
+                            borderColor: 'rgba(203, 213, 225, 0.8)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointBackgroundColor: 'white',
+                            pointBorderColor: 'rgba(203, 213, 225, 0.8)',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: 'rgba(74, 165, 255, 0.2)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y + 'cm';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                },
+                                color: '#9CA3AF'
+                            }
+                        },
+                        y: {
+                            min: 18,
+                            max: 21,
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.2)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                },
+                                color: '#9CA3AF',
+                                stepSize: 0.5
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    elements: {
+                        line: {
+                            tension: 0.3
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

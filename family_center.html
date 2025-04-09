@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>家庭中心 - 大脚科技</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                            rgba(255,255,255,0) 0%, 
+                            rgba(255,255,255,0.1) 50%, 
+                            rgba(255,255,255,0) 100%);
+            animation: shine 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* iPhone 15 Pro Max 样式 */
+        .iphone-frame {
+            width: 390px; /* iPhone 15 Pro Max 宽度 */
+            height: 844px; /* iPhone 15 Pro Max 高度 */
+            border-radius: 55px;
+            padding: 15px;
+            background: #1A1A1C; /* 深空黑 */
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.25),
+                      0 30px 60px -30px rgba(0, 0, 0, 0.3),
+                      inset 0 -2px 6px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        /* 电源键 */
+        .power-button {
+            position: absolute;
+            right: -3px;
+            top: 180px;
+            width: 3px;
+            height: 80px;
+            background: #2a2a2c;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        /* 音量按钮 */
+        .volume-up {
+            position: absolute;
+            left: -3px;
+            top: 150px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .volume-down {
+            position: absolute;
+            left: -3px;
+            top: 220px;
+            width: 3px;
+            height: 60px;
+            background: #2a2a2c;
+            border-radius: 2px 0 0 2px;
+        }
+        
+        /* 操作岛 */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .island-camera {
+            width: 10px;
+            height: 10px;
+            background: #222;
+            border-radius: 50%;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 3px;
+        }
+        
+        /* 屏幕内容 */
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 360px;
+            z-index: 50;
+            border-radius: 20px;
+        }
+        
+        /* 修改屏幕内容，确保内容不被底部导航栏遮挡 */
+        .app-content {
+            padding-bottom: 120px !important;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #111;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- iPhone 15 Pro Max 样机 -->
+    <div class="iphone-frame">
+        <!-- 物理按键 -->
+        <div class="power-button"></div>
+        <div class="volume-up"></div>
+        <div class="volume-down"></div>
+        
+        <!-- 动态岛 -->
+        <div class="dynamic-island">
+            <div class="island-camera"></div>
+        </div>
+        
+        <!-- 屏幕容器 -->
+        <div class="screen-content">
+            <!-- 主要应用内容 -->
+            <div class="app-content w-full h-full overflow-y-auto overflow-x-hidden relative bg-gradient-to-b from-white to-lightblue/10 pb-24">
+                <!-- 头部区域 -->
+                <div class="px-6 pt-14 pb-4 sticky top-0 z-30 bg-gradient-to-b from-white via-white to-white/90">
+                    <div class="flex items-center justify-between">
+                        <a href="dashboard.html" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 mr-4 shadow-md hover:shadow-lg transition-all">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <h1 class="text-xl font-bold text-gray-800 flex-1">家庭中心</h1>
+                        <button class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 shadow-md hover:shadow-lg transition-all">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 彩色装饰元素 -->
+                <div class="absolute top-40 right-[-80px] w-[200px] h-[200px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-float opacity-50"></div>
+                <div class="absolute bottom-40 left-[-50px] w-[150px] h-[150px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 animate-float opacity-50"></div>
+                
+                <!-- 家庭成员 -->
+                <div class="px-6 mt-4 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-gray-800">家庭成员</h2>
+                        <button class="text-primary flex items-center text-sm">
+                            <i class="fas fa-plus-circle mr-1"></i>
+                            添加成员
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- 父母 -->
+                        <div class="bg-white rounded-xl p-4 shadow-sm premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary/20 to-primary flex items-center justify-center mr-4">
+                                    <i class="fas fa-user text-primary text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-medium text-gray-800">刘爸爸</h3>
+                                        <span class="text-xs text-white bg-primary rounded-full px-2 py-0.5">管理员</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">178cm / 70kg / 42码</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 母亲 -->
+                        <div class="bg-white rounded-xl p-4 shadow-sm premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-secondary/20 to-secondary flex items-center justify-center mr-4">
+                                    <i class="fas fa-user text-secondary text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-medium text-gray-800">刘妈妈</h3>
+                                        <span class="text-xs text-white bg-secondary rounded-full px-2 py-0.5">家庭成员</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">165cm / 55kg / 37码</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 孩子1 -->
+                        <div class="bg-white rounded-xl p-4 shadow-sm premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-accent/20 to-accent flex items-center justify-center mr-4">
+                                    <i class="fas fa-child text-accent text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-medium text-gray-800">小明</h3>
+                                        <span class="text-xs text-white bg-accent rounded-full px-2 py-0.5">孩子</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">120cm / 25kg / 30码</p>
+                                </div>
+                                <div class="ml-2">
+                                    <a href="growth_record.html" class="text-primary">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 孩子2 -->
+                        <div class="bg-white rounded-xl p-4 shadow-sm premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-accent/20 to-accent flex items-center justify-center mr-4">
+                                    <i class="fas fa-child text-accent text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-medium text-gray-800">小红</h3>
+                                        <span class="text-xs text-white bg-accent rounded-full px-2 py-0.5">孩子</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">118cm / 23kg / 29码</p>
+                                </div>
+                                <div class="ml-2">
+                                    <a href="growth_record.html" class="text-primary">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 家庭活动 -->
+                <div class="px-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-gray-800">成长活动</h2>
+                        <button class="text-primary flex items-center text-sm">
+                            查看全部
+                            <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- 活动1 -->
+                        <div class="bg-white rounded-xl overflow-hidden premium-shadow">
+                            <div class="aspect-[16/9] bg-lightblue relative shine-effect">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                        <i class="fas fa-play text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                                    <h4 class="font-medium text-white">儿童足部健康指南</h4>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm text-gray-500">2023-09-15</span>
+                                    <span class="text-xs bg-lightblue text-primary rounded-full px-2 py-0.5">视频教程</span>
+                                </div>
+                                <p class="text-sm text-gray-600">了解如何保持孩子足部健康，并预防常见问题</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 活动2 -->
+                        <div class="bg-white rounded-xl overflow-hidden premium-shadow">
+                            <div class="aspect-[16/9] bg-lightpink relative shine-effect">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                        <i class="fas fa-calendar-alt text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                                    <h4 class="font-medium text-white">亲子运动日</h4>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm text-gray-500">2023-09-25</span>
+                                    <span class="text-xs bg-lightpink text-secondary rounded-full px-2 py-0.5">线下活动</span>
+                                </div>
+                                <p class="text-sm text-gray-600">参加我们的亲子运动日，提升足部健康与体能</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 常见问题 -->
+                <div class="px-6 mb-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-gray-800">常见问题</h2>
+                        <button class="text-primary flex items-center text-sm">
+                            查看全部
+                            <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full flex items-center justify-between bg-white p-4 rounded-xl premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fas fa-question text-primary"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">如何判断孩子是否需要更换鞋子？</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                        </button>
+                        
+                        <button class="w-full flex items-center justify-between bg-white p-4 rounded-xl premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fas fa-question text-primary"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">足弓发育正常的标准是什么？</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                        </button>
+                        
+                        <button class="w-full flex items-center justify-between bg-white p-4 rounded-xl premium-shadow">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                    <i class="fas fa-question text-primary"></i>
+                                </div>
+                                <span class="text-sm text-gray-700">如何确定孩子的精确鞋码？</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+                  
+            <!-- 底部导航栏 -->
+            <div class="bottom-nav glass-effect py-3 px-4 shadow-lg">
+                <div class="flex justify-between items-center">
+                    <a href="dashboard.html" class="flex flex-col items-center">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-home text-lg"></i>
+                        </div>
+                        <span class="text-xs mt-1 text-gray-500">首页</span>
+                    </a>
+                    
+                    <a href="shoe_selection.html" class="flex flex-col items-center">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-shopping-bag text-lg"></i>
+                        </div>
+                        <span class="text-xs mt-1 text-gray-500">选购</span>
+                    </a>
+                    
+                    <a href="foot_scan.html" class="flex flex-col items-center">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-shoe-prints text-lg"></i>
+                        </div>
+                        <span class="text-xs mt-1 text-gray-500">足部扫描</span>
+                    </a>
+                    
+                    <a href="my_designs.html" class="flex flex-col items-center">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-tshirt text-lg"></i>
+                        </div>
+                        <span class="text-xs mt-1 text-gray-500">我的设计</span>
+                    </a>
+                    
+                    <a href="family_center.html" class="flex flex-col items-center relative">
+                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg">
+                            <i class="fas fa-user text-lg"></i>
+                        </div>
+                        <span class="text-xs mt-1 text-gray-700 font-medium">家庭中心</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部指示条 -->
+        <div class="home-indicator"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加按钮点击波纹效果
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('absolute', 'w-0', 'h-0', 'rounded-full', 'bg-white', 'opacity-30');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.classList.add('w-[300px]', 'h-[300px]', 'transition-all', 'duration-500', 'ease-out');
+                    }, 0);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 500);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

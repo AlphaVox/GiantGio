@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物流跟踪 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 物流时间线样式 */
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .timeline-line {
+            width: 1px;
+            background-color: #E2E8F0;
+            flex-shrink: 0;
+            margin-left: 5.5px;
+        }
+        
+        .timeline-active .timeline-dot {
+            background-color: #4AA5FF;
+        }
+        
+        .timeline-active .timeline-text {
+            color: #4AA5FF;
+            font-weight: 500;
+        }
+        
+        .timeline-inactive .timeline-dot {
+            background-color: #CBD5E1;
+        }
+        
+        /* 包裹状态 */
+        .package-status {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .package-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(120deg, rgba(74, 165, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: 0;
+        }
+        
+        .moving-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #4AA5FF;
+            top: 50%;
+            left: 30%;
+            margin-top: -10px;
+            margin-left: -10px;
+            box-shadow: 0 0 0 rgba(74, 165, 255, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 165, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(74, 165, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 165, 255, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 顶部装饰元素 -->
+        <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+        <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+        
+        <!-- 顶部导航 -->
+        <div class="relative bg-gradient-to-br from-primary to-primary-dark px-4 py-4">
+            <div class="flex items-center">
+                <a href="javascript:history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-white ml-4">物流跟踪</h1>
+            </div>
+        </div>
+        
+        <!-- 快递信息卡片 -->
+        <div class="px-4 pt-4 animate-fade-in-up">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
+                <div class="package-status p-4 relative">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium">顺丰速递</h3>
+                            <div class="text-sm text-gray-500 mt-1 flex items-center">
+                                <span>运单号：SF1234567890123</span>
+                                <button class="ml-2 text-primary">
+                                    <i class="fas fa-copy text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <img src="https://placehold.co/80x80/EFF6FF/4AA5FF?text=顺丰&font=opensans" class="w-14 h-14 object-contain rounded-lg shadow-sm" alt="顺丰快递">
+                    </div>
+                    <div class="mt-3 flex justify-between">
+                        <div class="relative z-10">
+                            <div class="text-gray-500 text-xs">配送范围</div>
+                            <div class="font-medium mt-1">广州市 → 广州市</div>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="text-gray-500 text-xs">预计送达</div>
+                            <div class="font-medium mt-1">7月17日(周一)</div>
+                        </div>
+                    </div>
+                    <div class="moving-dot"></div>
+                </div>
+                
+                <!-- 包裹状态进度条 -->
+                <div class="px-4 py-3 border-t border-gray-100">
+                    <div class="text-sm">包裹状态</div>
+                    <div class="mt-3">
+                        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full w-3/5 bg-gradient-to-r from-primary to-primary-dark rounded-full"></div>
+                        </div>
+                        <div class="flex justify-between text-xs mt-2">
+                            <div class="text-primary font-medium">已揽收</div>
+                            <div class="text-primary font-medium">运输中</div>
+                            <div class="text-gray-400">派送中</div>
+                            <div class="text-gray-400">已签收</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 物流追踪信息 -->
+                <div class="px-4 py-3 border-t border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm">追踪详情</div>
+                        <a href="customer_service.html" class="text-primary text-xs flex items-center">
+                            <i class="fas fa-headset mr-1"></i>
+                            联系客服
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 时间线 -->
+        <div class="px-4 py-3 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <div class="flex items-start timeline-active">
+                    <div class="flex flex-col items-center mr-3">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-line h-24"></div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="timeline-text font-medium">【广州市】您的包裹已到达【广州天河转运中心】</div>
+                        <div class="text-gray-500 text-xs mt-1">2023-07-16 08:35:12</div>
+                        <div class="bg-primary/5 mt-2 p-3 rounded-lg text-sm">
+                            <div class="font-medium text-primary">今日预计到达配送点</div>
+                            <div class="mt-1 text-gray-600">预计今天12:00前到达 [广州市天河区华南理工大学五山校区]</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start timeline-active">
+                    <div class="flex flex-col items-center mr-3">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-line h-16"></div>
+                    </div>
+                    <div>
+                        <div class="timeline-text font-medium">【广州市】您的包裹已从【广州总仓】发出</div>
+                        <div class="text-gray-500 text-xs mt-1">2023-07-16 01:23:45</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start timeline-active">
+                    <div class="flex flex-col items-center mr-3">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-line h-16"></div>
+                    </div>
+                    <div>
+                        <div class="timeline-text font-medium">【广州市】快递员已揽收</div>
+                        <div class="text-gray-500 text-xs mt-1">2023-07-15 18:42:31</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start timeline-active">
+                    <div class="flex flex-col items-center mr-3">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-line h-16"></div>
+                    </div>
+                    <div>
+                        <div class="timeline-text font-medium">【广州市】卖家已发货</div>
+                        <div class="text-gray-500 text-xs mt-1">2023-07-15 17:30:59</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start timeline-active">
+                    <div class="flex flex-col items-center mr-3">
+                        <div class="timeline-dot"></div>
+                    </div>
+                    <div>
+                        <div class="timeline-text font-medium">订单已支付</div>
+                        <div class="text-gray-500 text-xs mt-1">2023-07-15 14:30:12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收货地址 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">收货信息</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex">
+                        <div class="text-primary text-xl mr-3">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center">
+                                <span class="font-medium">李妈妈</span>
+                                <span class="ml-3 text-gray-600">13812345678</span>
+                            </div>
+                            <div class="text-gray-600 mt-1 text-sm max-w-xs">
+                                广东省广州市天河区华南理工大学五山校区B6栋405室
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 包裹信息 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">包裹信息</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex items-center mb-3">
+                        <div class="w-16 h-16 rounded-lg overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://placehold.co/240x240/EFF6FF/4AA5FF?text=成长鞋&font=opensans" class="w-full h-full object-cover" alt="儿童成长鞋">
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="font-medium text-sm">儿童智能成长跟踪鞋 - 蓝色恐龙款</h3>
+                            <div class="text-xs text-gray-500 mt-1">规格：31码 / 蓝色 / 恐龙图案</div>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <div class="w-16 h-16 rounded-lg overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://placehold.co/240x240/F3E8FF/A78BFA?text=定制&font=opensans" class="w-full h-full object-cover" alt="定制服务">
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="font-medium text-sm">专属定制名字刻印服务</h3>
+                            <div class="text-xs text-gray-500 mt-1">内容：小明 / 英文字体</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-sm py-2 border-t border-gray-100 mt-1">
+                        <div class="text-gray-600">共2件商品</div>
+                        <div>总金额：<span class="text-primary font-medium">¥ 272.65</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 物流公司信息 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.25s;">
+            <div class="bg-white rounded-xl overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">物流公司</h3>
+                </div>
+                <div class="px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <img src="https://placehold.co/80x80/EFF6FF/4AA5FF?text=顺丰&font=opensans" class="w-10 h-10 object-contain rounded-lg shadow-sm" alt="顺丰快递">
+                            <div class="ml-3">
+                                <div class="font-medium">顺丰速递</div>
+                                <div class="text-gray-500 text-xs mt-0.5">400-111-1111</div>
+                            </div>
+                        </div>
+                        <a href="tel:400-111-1111" class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <i class="fas fa-phone-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部按钮 -->
+        <div class="px-4 py-4 pb-20 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="flex space-x-3">
+                <a href="order_details.html" class="w-1/2 h-11 rounded-full border border-gray-300 text-gray-600 font-medium flex items-center justify-center">
+                    <i class="fas fa-arrow-left mr-2"></i> 返回订单
+                </a>
+                <a href="customer_service.html" class="w-1/2 h-11 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-medium flex items-center justify-center shadow-md">
+                    <i class="fas fa-headset mr-2"></i> 联系客服
+                </a>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+            <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-home text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+            <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">选购</span>
+            </a>
+            <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                    <i class="fas fa-shoe-prints"></i>
+                </div>
+                <span class="text-xs text-primary mt-6">足部扫描</span>
+            </a>
+            <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">我的设计</span>
+            </a>
+            <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-users text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">家庭中心</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 复制运单号功能
+            const copyButton = document.querySelector('.fa-copy').parentElement;
+            if (copyButton) {
+                copyButton.addEventListener('click', function() {
+                    // 模拟复制功能，实际项目中需要使用Clipboard API
+                    const trackingNumber = document.querySelector('.text-sm.text-gray-500.mt-1.flex.items-center span').textContent.split('：')[1];
+                    
+                    // 创建临时元素用于复制
+                    const tempInput = document.createElement('input');
+                    tempInput.value = trackingNumber;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    
+                    // 显示提示
+                    alert('运单号已复制到剪贴板: ' + trackingNumber);
+                });
+            }
+            
+            // 模拟物流实时更新（每30秒）
+            function updateLogistics() {
+                const timeline = document.querySelector('.timeline-active:first-child .timeline-text');
+                const timelineTime = document.querySelector('.timeline-active:first-child .text-gray-500');
+                
+                const now = new Date();
+                const formattedTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                
+                // 随机更新位置
+                const locations = [
+                    '【广州市】您的包裹已到达【广州天河转运中心】',
+                    '【广州市】您的包裹运输中，即将到达【天河区配送点】',
+                    '【广州市】您的包裹已到达【天河区配送点】，等待配送',
+                    '【广州市】快递员【张师傅(13812345678)】正在为您派送',
+                    '【广州市】您的包裹已派送至【华南理工大学五山校区】'
+                ];
+                
+                // 每次调用时更新到下一个状态
+                let currentIndex = locations.indexOf(timeline.textContent);
+                if (currentIndex < locations.length - 1) {
+                    currentIndex++;
+                    timeline.textContent = locations[currentIndex];
+                    timelineTime.textContent = formattedTime;
+                    
+                    // 更新进度条
+                    const progressBar = document.querySelector('.h-full');
+                    progressBar.style.width = `${60 + (currentIndex * 10)}%`;
+                    
+                    // 如果到达最后一个状态，更新状态文本
+                    if (currentIndex === locations.length - 1) {
+                        const statusTexts = document.querySelectorAll('.flex.justify-between.text-xs.mt-2 div');
+                        statusTexts[2].classList.remove('text-gray-400');
+                        statusTexts[2].classList.add('text-primary', 'font-medium');
+                    }
+                }
+            }
+            
+            // 设置定时器，实际项目中可能是通过WebSocket或轮询API来实现
+            // 这里为了演示效果，设置为15秒更新一次
+            setTimeout(updateLogistics, 15000);
+        });
+    </script>
+</body>
+</html> 

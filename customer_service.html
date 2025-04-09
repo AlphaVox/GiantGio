@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>联系客服 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 消息气泡样式 */
+        .msg-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+        
+        .msg-bubble.user {
+            background-color: #4AA5FF;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .msg-bubble.service {
+            background-color: #F1F5F9;
+            color: #334155;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .msg-bubble .msg-time {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.7;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 顶部装饰元素 -->
+        <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+        <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+        
+        <!-- 顶部导航 -->
+        <div class="relative bg-gradient-to-br from-primary to-primary-dark px-4 py-4">
+            <div class="flex items-center">
+                <a href="javascript:history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-white ml-4">联系客服</h1>
+            </div>
+        </div>
+        
+        <!-- 客服选项卡 -->
+        <div class="px-4 pt-4">
+            <div class="flex bg-gray-100 rounded-lg p-1">
+                <button id="tab-ai" class="w-1/2 py-2 px-4 rounded-md bg-white shadow-sm text-primary font-medium transition-all">
+                    智能客服
+                </button>
+                <button id="tab-human" class="w-1/2 py-2 px-4 rounded-md text-gray-600 font-medium transition-all">
+                    人工客服
+                </button>
+            </div>
+        </div>
+        
+        <!-- 常见问题 -->
+        <div id="common-questions" class="px-4 pt-4">
+            <h3 class="text-gray-700 font-medium mb-3">常见问题</h3>
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-white rounded-xl p-3 shadow-sm animate-fade-in-up" style="animation-delay: 0.05s;">
+                    <div class="text-primary text-lg mb-2">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                    <div class="text-gray-800 font-medium text-sm">订单配送问题</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="text-primary text-lg mb-2">
+                        <i class="fas fa-rotate-left"></i>
+                    </div>
+                    <div class="text-gray-800 font-medium text-sm">退换货政策</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm animate-fade-in-up" style="animation-delay: 0.15s;">
+                    <div class="text-primary text-lg mb-2">
+                        <i class="fas fa-shoes"></i>
+                    </div>
+                    <div class="text-gray-800 font-medium text-sm">尺码问题</div>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="text-primary text-lg mb-2">
+                        <i class="fas fa-screwdriver-wrench"></i>
+                    </div>
+                    <div class="text-gray-800 font-medium text-sm">产品使用问题</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 聊天区域 -->
+        <div id="chat-area" class="px-4 pt-3 pb-24">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-4 animate-fade-in-up" style="animation-delay: 0.25s;">
+                <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-medium">智能客服</h3>
+                    <div class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                        在线
+                    </div>
+                </div>
+                
+                <!-- 聊天内容 -->
+                <div class="px-4 py-3 h-80 overflow-y-auto scrollbar-hide" id="chat-messages">
+                    <!-- 客服消息 -->
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <div class="ml-2">
+                            <div class="msg-bubble service">
+                                您好！我是大脚科技的智能客服小脚，很高兴为您服务。请问有什么可以帮助您的吗？
+                                <div class="msg-time">14:30</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户消息 -->
+                    <div class="flex items-start mb-4 justify-end">
+                        <div class="mr-2">
+                            <div class="msg-bubble user">
+                                我的订单什么时候发货？
+                                <div class="msg-time text-white/80">14:32</div>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 客服消息 -->
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <div class="ml-2">
+                            <div class="msg-bubble service">
+                                您好，根据您的订单信息，您的订单将在明天（7月16日）安排发货，预计2-3天送达。如有特殊情况，我们会及时与您联系。
+                                <div class="msg-time">14:32</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 输入区域 -->
+                <div class="p-3 border-t border-gray-100">
+                    <div class="flex items-center">
+                        <button class="w-8 h-8 flex items-center justify-center text-gray-500 flex-shrink-0">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <div class="mx-2 flex-1">
+                            <input type="text" placeholder="请输入您的问题..." class="w-full px-3 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center bg-primary rounded-full text-white flex-shrink-0">
+                            <i class="fas fa-paper-plane text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 联系电话 -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-medium">客服热线</h3>
+                        <p class="text-sm text-gray-500 mt-1">周一至周日 9:00-22:00</p>
+                    </div>
+                    <a href="tel:400-123-4567" class="h-10 px-4 bg-primary/10 text-primary rounded-full flex items-center font-medium">
+                        <i class="fas fa-phone-alt mr-2"></i>
+                        400-123-4567
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 人工客服区域（默认隐藏） -->
+        <div id="human-service" class="px-4 pt-3 pb-24 hidden">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="font-medium">当前客服在线状态</h3>
+                </div>
+                <div class="p-4 flex items-center">
+                    <div class="w-12 h-12 rounded-full border-2 border-primary p-0.5 flex-shrink-0">
+                        <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=客服&font=opensans" class="w-full h-full rounded-full" alt="客服头像">
+                    </div>
+                    <div class="ml-3">
+                        <div class="flex items-center">
+                            <h4 class="font-medium">李客服</h4>
+                            <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex items-center">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
+                                在线
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">平均响应时间：2分钟</p>
+                    </div>
+                    <button id="start-chat" class="ml-auto h-10 px-4 bg-primary rounded-full text-white flex items-center font-medium">
+                        <i class="fas fa-comment-dots mr-2"></i>
+                        立即咨询
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 服务时间 -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <h3 class="font-medium mb-3">服务时间</h3>
+                <div class="flex items-center mb-3">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="font-medium text-sm">在线人工客服</h4>
+                        <p class="text-xs text-gray-500 mt-1">周一至周日 9:00-22:00</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="font-medium text-sm">电话客服</h4>
+                        <p class="text-xs text-gray-500 mt-1">周一至周日 8:00-24:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 人工客服聊天界面（默认隐藏） -->
+        <div id="human-chat" class="px-4 pt-3 pb-24 hidden">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+                            <img src="https://placehold.co/200x200/EFF6FF/4AA5FF?text=客服&font=opensans" class="w-full h-full object-cover" alt="客服头像">
+                        </div>
+                        <div>
+                            <h3 class="font-medium">李客服</h3>
+                            <div class="text-xs text-gray-500">在线 | 工号: CS10086</div>
+                        </div>
+                    </div>
+                    <button id="close-chat" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 订单信息 -->
+                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg overflow-hidden shadow-sm flex-shrink-0">
+                            <img src="https://placehold.co/240x240/EFF6FF/4AA5FF?text=成长鞋&font=opensans" class="w-full h-full object-cover" alt="儿童成长鞋">
+                        </div>
+                        <div class="ml-2 flex-1">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-medium text-sm">订单号：DJT20230715001</h3>
+                                <span class="text-xs text-primary">查看详情</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">儿童智能成长跟踪鞋 - 蓝色恐龙款</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 聊天内容 -->
+                <div class="px-4 py-3 h-80 overflow-y-auto scrollbar-hide" id="human-chat-messages">
+                    <!-- 系统消息 -->
+                    <div class="text-center text-xs text-gray-500 my-3">
+                        ---------- 2023年7月15日 15:05 ----------
+                    </div>
+                    
+                    <!-- 系统提示 -->
+                    <div class="bg-primary/5 rounded-lg p-3 text-xs text-gray-600 mb-4">
+                        您已接入人工客服，客服李正在为您服务，请问有什么可以帮助您的？
+                    </div>
+                    
+                    <!-- 客服消息 -->
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <div class="ml-2">
+                            <div class="msg-bubble service">
+                                您好，我是客服李，很高兴为您服务。请问您对订单DJT20230715001有什么疑问吗？
+                                <div class="msg-time">15:05</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户消息 -->
+                    <div class="flex items-start mb-4 justify-end">
+                        <div class="mr-2">
+                            <div class="msg-bubble user">
+                                您好，我想问一下这个订单什么时候能发货？
+                                <div class="msg-time text-white/80">15:05</div>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 客服消息 -->
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <div class="ml-2">
+                            <div class="msg-bubble service">
+                                感谢您的耐心等待。我已经查询了您的订单，系统显示您的订单将在明天（7月16日）安排发货，预计2-3天送达。
+                                <div class="msg-time">15:06</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-headset text-sm"></i>
+                        </div>
+                        <div class="ml-2">
+                            <div class="msg-bubble service">
+                                如有特殊情况，我们会及时与您联系。您可以在「订单详情」中随时查看物流状态。请问还有其他问题吗？
+                                <div class="msg-time">15:06</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 快捷回复 -->
+                <div class="px-4 py-2 border-t border-gray-100">
+                    <div class="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
+                        <button class="quick-reply whitespace-nowrap px-3 py-1.5 bg-gray-100 rounded-full text-gray-600 text-xs">
+                            物流进度查询
+                        </button>
+                        <button class="quick-reply whitespace-nowrap px-3 py-1.5 bg-gray-100 rounded-full text-gray-600 text-xs">
+                            退换货申请
+                        </button>
+                        <button class="quick-reply whitespace-nowrap px-3 py-1.5 bg-gray-100 rounded-full text-gray-600 text-xs">
+                            尺码不合适
+                        </button>
+                        <button class="quick-reply whitespace-nowrap px-3 py-1.5 bg-gray-100 rounded-full text-gray-600 text-xs">
+                            如何使用APP
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 输入区域 -->
+                <div class="p-3 border-t border-gray-100">
+                    <div class="flex items-center">
+                        <button class="w-8 h-8 flex items-center justify-center text-gray-500 flex-shrink-0">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <div class="mx-2 flex-1">
+                            <input type="text" id="human-chat-input" placeholder="请输入您的问题..." class="w-full px-3 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+                        </div>
+                        <button id="human-send-btn" class="w-8 h-8 flex items-center justify-center bg-primary rounded-full text-white flex-shrink-0">
+                            <i class="fas fa-paper-plane text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他订单 -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <h3 class="font-medium mb-2">您的其他订单</h3>
+                <div class="flex justify-between items-center text-sm">
+                    <span>查看全部订单记录</span>
+                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                </div>
+            </div>
+            
+            <!-- 常见问题快捷入口 -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <h3 class="font-medium mb-3">常见问题</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="flex items-center py-2 px-3 rounded-lg border border-gray-200">
+                        <i class="fas fa-truck-fast text-primary mr-2"></i>
+                        <span class="text-sm">物流相关</span>
+                    </button>
+                    <button class="flex items-center py-2 px-3 rounded-lg border border-gray-200">
+                        <i class="fas fa-rotate-left text-primary mr-2"></i>
+                        <span class="text-sm">退换货</span>
+                    </button>
+                    <button class="flex items-center py-2 px-3 rounded-lg border border-gray-200">
+                        <i class="fas fa-credit-card text-primary mr-2"></i>
+                        <span class="text-sm">支付问题</span>
+                    </button>
+                    <button class="flex items-center py-2 px-3 rounded-lg border border-gray-200">
+                        <i class="fas fa-question-circle text-primary mr-2"></i>
+                        <span class="text-sm">使用帮助</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white border-t border-gray-100 flex items-center justify-around px-6 shadow-lg z-40">
+            <a href="dashboard.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-home text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">首页</span>
+            </a>
+            <a href="shoe_selection.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-shopping-bag text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">选购</span>
+            </a>
+            <a href="foot_scan.html" class="flex flex-col items-center justify-center w-16 relative">
+                <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg absolute -top-5">
+                    <i class="fas fa-shoe-prints"></i>
+                </div>
+                <span class="text-xs text-primary mt-6">足部扫描</span>
+            </a>
+            <a href="my_designs.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-tshirt text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">我的设计</span>
+            </a>
+            <a href="family_center.html" class="flex flex-col items-center justify-center w-16">
+                <i class="fas fa-users text-gray-400 mb-1"></i>
+                <span class="text-xs text-gray-400">家庭中心</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 选项卡切换功能
+            const tabAi = document.getElementById('tab-ai');
+            const tabHuman = document.getElementById('tab-human');
+            const commonQuestions = document.getElementById('common-questions');
+            const chatArea = document.getElementById('chat-area');
+            const humanService = document.getElementById('human-service');
+            const humanChat = document.getElementById('human-chat');
+            
+            tabAi.addEventListener('click', function() {
+                tabAi.classList.add('bg-white', 'shadow-sm', 'text-primary');
+                tabAi.classList.remove('text-gray-600');
+                tabHuman.classList.remove('bg-white', 'shadow-sm', 'text-primary');
+                tabHuman.classList.add('text-gray-600');
+                
+                commonQuestions.classList.remove('hidden');
+                chatArea.classList.remove('hidden');
+                humanService.classList.add('hidden');
+                humanChat.classList.add('hidden');
+            });
+            
+            tabHuman.addEventListener('click', function() {
+                tabHuman.classList.add('bg-white', 'shadow-sm', 'text-primary');
+                tabHuman.classList.remove('text-gray-600');
+                tabAi.classList.remove('bg-white', 'shadow-sm', 'text-primary');
+                tabAi.classList.add('text-gray-600');
+                
+                commonQuestions.classList.add('hidden');
+                chatArea.classList.add('hidden');
+                humanService.classList.remove('hidden');
+                humanChat.classList.add('hidden');
+            });
+            
+            // 立即咨询按钮点击
+            const startChatBtn = document.getElementById('start-chat');
+            const closeChatBtn = document.getElementById('close-chat');
+            
+            startChatBtn.addEventListener('click', function() {
+                humanService.classList.add('hidden');
+                humanChat.classList.remove('hidden');
+            });
+            
+            closeChatBtn.addEventListener('click', function() {
+                humanChat.classList.add('hidden');
+                humanService.classList.remove('hidden');
+            });
+            
+            // 常见问题点击
+            const commonQuestionCards = document.querySelectorAll('#common-questions .bg-white');
+            commonQuestionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const question = this.querySelector('.text-gray-800').textContent;
+                    addUserMessage(question);
+                    
+                    // 模拟客服回复
+                    setTimeout(function() {
+                        let response = '';
+                        if (question.includes('配送')) {
+                            response = '您好，我们的订单通常在支付后24小时内发货。配送时间取决于您的收货地址，一般为1-3天。您可以在"订单详情"页面查看物流状态。';
+                        } else if (question.includes('退换货')) {
+                            response = '您好，我们支持7天无理由退换货，商品需保持全新未使用状态。定制类商品除外。您可以在"订单详情"页面申请退换货服务。';
+                        } else if (question.includes('尺码')) {
+                            response = '您好，我们的智能成长鞋建议选择比足长多0.5-1cm的尺码。您可以通过我们的足部扫描功能精确测量孩子足部尺寸，系统会智能推荐合适的尺码。';
+                        } else if (question.includes('使用')) {
+                            response = '您好，智能成长鞋首次使用前需通过APP完成激活，并与您的账号配对。使用过程中如遇到问题，可查看"使用指南"或联系我们的客服。';
+                        } else {
+                            response = '您好，很抱歉我无法理解您的问题。请您描述得更详细一些，或者选择人工客服为您解答。';
+                        }
+                        addServiceMessage(response);
+                    }, 500);
+                });
+            });
+            
+            // 发送消息功能 - 智能客服
+            const sendButton = document.querySelector('.fa-paper-plane').parentElement;
+            const inputField = document.querySelector('input[type="text"]');
+            
+            function sendMessage() {
+                const message = inputField.value.trim();
+                if (message) {
+                    addUserMessage(message);
+                    inputField.value = '';
+                    
+                    // 模拟客服回复
+                    setTimeout(function() {
+                        addServiceMessage('感谢您的咨询。我们的客服人员正在处理您的问题，请稍候。如需更多帮助，可以选择"人工客服"为您提供专业解答。');
+                    }, 1000);
+                }
+            }
+            
+            sendButton.addEventListener('click', sendMessage);
+            inputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // 发送消息功能 - 人工客服
+            const humanSendBtn = document.getElementById('human-send-btn');
+            const humanInputField = document.getElementById('human-chat-input');
+            
+            function sendHumanMessage() {
+                const message = humanInputField.value.trim();
+                if (message) {
+                    addHumanUserMessage(message);
+                    humanInputField.value = '';
+                    
+                    // 模拟客服回复
+                    setTimeout(function() {
+                        if (message.includes('退换') || message.includes('退货') || message.includes('换货')) {
+                            addHumanServiceMessage('您好，根据我们的退换货政策，您可以在收到商品7天内申请退换货。您可以在"我的订单"中找到相应订单，点击"申请退换"，按照提示完成操作。需要注意的是，商品需保持全新未使用状态，且定制类商品不支持无理由退换。');
+                        } else if (message.includes('物流') || message.includes('快递') || message.includes('发货')) {
+                            addHumanServiceMessage('您好，我已为您查询了最新物流信息，您的包裹正在配送中，预计1-2天内送达。如有任何变动，系统会通过短信或APP通知您。您也可以在"订单详情"页面实时查看物流动态。');
+                        } else {
+                            addHumanServiceMessage('非常感谢您的咨询。我已记录您的问题，我们会尽快为您解决。请问还有其他需要帮助的吗？');
+                        }
+                    }, 1000);
+                }
+            }
+            
+            humanSendBtn.addEventListener('click', sendHumanMessage);
+            humanInputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendHumanMessage();
+                }
+            });
+            
+            // 快捷回复按钮点击
+            const quickReplyBtns = document.querySelectorAll('.quick-reply');
+            quickReplyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const reply = this.textContent.trim();
+                    humanInputField.value = reply;
+                    sendHumanMessage();
+                });
+            });
+            
+            // 添加用户消息到聊天区域 - 智能客服
+            function addUserMessage(message) {
+                const now = new Date();
+                const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                
+                const chatMessages = document.getElementById('chat-messages');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex items-start mb-4 justify-end animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="mr-2">
+                        <div class="msg-bubble user">
+                            ${message}
+                            <div class="msg-time text-white/80">${time}</div>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                `;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 添加客服消息到聊天区域 - 智能客服
+            function addServiceMessage(message) {
+                const now = new Date();
+                const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                
+                const chatMessages = document.getElementById('chat-messages');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex items-start mb-4 animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                        <i class="fas fa-headset text-sm"></i>
+                    </div>
+                    <div class="ml-2">
+                        <div class="msg-bubble service">
+                            ${message}
+                            <div class="msg-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 添加用户消息到聊天区域 - 人工客服
+            function addHumanUserMessage(message) {
+                const now = new Date();
+                const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                
+                const chatMessages = document.getElementById('human-chat-messages');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex items-start mb-4 justify-end animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="mr-2">
+                        <div class="msg-bubble user">
+                            ${message}
+                            <div class="msg-time text-white/80">${time}</div>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                `;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 添加客服消息到聊天区域 - 人工客服
+            function addHumanServiceMessage(message) {
+                const now = new Date();
+                const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                
+                const chatMessages = document.getElementById('human-chat-messages');
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex items-start mb-4 animate-fade-in-up';
+                msgDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
+                        <i class="fas fa-headset text-sm"></i>
+                    </div>
+                    <div class="ml-2">
+                        <div class="msg-bubble service">
+                            ${message}
+                            <div class="msg-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html> 

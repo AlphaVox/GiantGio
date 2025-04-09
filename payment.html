@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>订单支付 - 大脚科技</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4AA5FF',
+                        'primary-dark': '#3388DD',
+                        secondary: '#FF9AA2',
+                        accent: '#FFD966',
+                        light: '#F8FAFC',
+                        lightblue: '#EFF6FF',
+                        lilac: '#F3E8FF',
+                        mint: '#ECFDF5',
+                        lightpink: '#FDF2F8',
+                        peach: '#FFF7ED'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '"PingFang SC"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                        'fade-out-down': 'fadeOutDown 0.5s ease-out',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOutDown: {
+                            '0%': { opacity: '1', transform: 'translateY(0)' },
+                            '100%': { opacity: '0', transform: 'translateY(10px)' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(74, 165, 255, 0)' },
+                            '50%': { boxShadow: '0 0 15px 5px rgba(74, 165, 255, 0.3)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        @keyframes countdown-animation {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: 283; } /* 2 * PI * radius */
+        }
+        
+        .countdown-circle {
+            stroke-dasharray: 283; /* 2 * PI * radius */
+            animation: countdown-animation 300s linear forwards;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 25px -5px rgba(74, 165, 255, 0.1), 
+                        0 5px 10px -5px rgba(74, 165, 255, 0.25);
+        }
+        
+        .glass-morph {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 滚动条隐藏 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8FAFC;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-white to-blue-50/30 shadow-lg overflow-hidden relative">
+        <!-- 顶部装饰元素 -->
+        <div class="absolute top-0 right-0 w-[250px] h-[250px] rounded-full bg-gradient-to-br from-primary/10 to-accent/10 filter blur-3xl opacity-70 transform translate-x-1/4 -translate-y-1/2"></div>
+        <div class="absolute top-[420px] left-[-100px] w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-secondary/10 to-primary/5 filter blur-2xl opacity-50"></div>
+        
+        <!-- 顶部导航 -->
+        <div class="relative bg-gradient-to-br from-primary to-primary-dark px-4 py-4">
+            <div class="flex items-center">
+                <a href="javascript:history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-white ml-4">订单支付</h1>
+            </div>
+        </div>
+        
+        <!-- 订单信息卡片 -->
+        <div class="px-4 pt-4 animate-fade-in-up">
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-gray-600 text-sm">订单编号：<span id="orderNo">DJT20230715001</span></div>
+                    <div class="flex items-center">
+                        <div class="countdown-timer flex items-center">
+                            <svg width="16" height="16" viewBox="0 0 45 45">
+                                <circle cx="22.5" cy="22.5" r="20" stroke="#E2E8F0" stroke-width="5" fill="none"></circle>
+                                <circle class="countdown-circle" cx="22.5" cy="22.5" r="20" stroke="#4AA5FF" stroke-width="5" fill="none" transform="rotate(-90 22.5 22.5)"></circle>
+                            </svg>
+                            <span class="text-sm text-gray-500 ml-1" id="countdownTimer">04:59</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-100 pt-3 pb-1">
+                    <div class="text-2xl font-bold text-primary">¥ 272.65</div>
+                    <div class="text-sm text-gray-500 mt-1">大脚科技旗舰店</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 支付方式选择 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <h2 class="text-gray-700 font-medium mb-3">选择支付方式</h2>
+            
+            <!-- 支付宝 -->
+            <div class="bg-white rounded-xl overflow-hidden mb-3">
+                <label class="flex items-center p-4 cursor-pointer payment-option active" data-method="alipay">
+                    <div class="flex-1 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3">
+                            <i class="fab fa-alipay text-[#1677FF] text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">支付宝</div>
+                            <div class="text-xs text-gray-500">中国领先的移动支付平台</div>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 border-primary flex-shrink-0 flex items-center justify-center payment-radio">
+                        <div class="w-3 h-3 rounded-full bg-primary"></div>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- 微信支付 -->
+            <div class="bg-white rounded-xl overflow-hidden mb-3">
+                <label class="flex items-center p-4 cursor-pointer payment-option" data-method="wechat">
+                    <div class="flex-1 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center mr-3">
+                            <i class="fab fa-weixin text-[#07C160] text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">微信支付</div>
+                            <div class="text-xs text-gray-500">微信安全支付</div>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center payment-radio">
+                        <div class="w-3 h-3 rounded-full bg-primary opacity-0"></div>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- 银行卡支付 -->
+            <div class="bg-white rounded-xl overflow-hidden mb-3">
+                <label class="flex items-center p-4 cursor-pointer payment-option" data-method="bank">
+                    <div class="flex-1 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-credit-card text-purple-500 text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">银行卡支付</div>
+                            <div class="text-xs text-gray-500">储蓄卡/信用卡安全支付</div>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center payment-radio">
+                        <div class="w-3 h-3 rounded-full bg-primary opacity-0"></div>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- 货到付款 -->
+            <div class="bg-white rounded-xl overflow-hidden mb-3">
+                <label class="flex items-center p-4 cursor-pointer payment-option" data-method="cod">
+                    <div class="flex-1 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center mr-3">
+                            <i class="fas fa-money-bill-wave text-amber-500 text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">货到付款</div>
+                            <div class="text-xs text-gray-500">收到商品后再付款</div>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center payment-radio">
+                        <div class="w-3 h-3 rounded-full bg-primary opacity-0"></div>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+        <!-- 安全提示 -->
+        <div class="px-4 py-2 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="bg-blue-50 rounded-lg p-3 flex items-start">
+                <i class="fas fa-shield-alt text-primary mt-0.5 mr-2"></i>
+                <div class="text-xs text-gray-600">
+                    大脚科技提供支付安全保障，未经确认的订单支付将原路退回，请放心支付。如有疑问，请联系客服：400-888-8888
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部支付按钮 -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 max-w-md mx-auto">
+            <div class="flex justify-between items-center h-16 px-4">
+                <div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600">实付金额：</span>
+                        <span class="text-xl text-primary font-bold">¥ 272.65</span>
+                    </div>
+                    <div class="text-xs text-gray-500" id="orderExpire">请在5分钟内完成支付</div>
+                </div>
+                <button id="payButton" class="w-36 h-10 bg-gradient-to-r from-primary to-primary-dark text-white font-medium rounded-full flex items-center justify-center shadow-md transition-all hover:shadow-lg active:scale-95 animate-pulse-glow">
+                    确认支付
+                </button>
+            </div>
+        </div>
+        
+        <!-- 支付成功弹窗 (默认隐藏) -->
+        <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 invisible opacity-0 transition-all duration-300 max-w-md mx-auto">
+            <div class="bg-white rounded-xl p-6 w-[85%] text-center transform scale-95 transition-all duration-300">
+                <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-green-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">支付成功</h3>
+                <p class="text-gray-600 mb-5">您的订单已支付成功，我们将尽快为您发货</p>
+                <div class="flex space-x-3">
+                    <a href="order_details.html" class="flex-1 py-2.5 rounded-full border border-primary text-primary font-medium">
+                        查看订单
+                    </a>
+                    <a href="dashboard.html" class="flex-1 py-2.5 rounded-full bg-primary text-white font-medium">
+                        返回首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取订单数据
+            const pendingOrder = localStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                const orderData = JSON.parse(pendingOrder);
+                document.getElementById('orderNo').textContent = orderData.orderNo;
+            }
+            
+            // 支付方式选择
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 清除所有选中样式
+                    paymentOptions.forEach(opt => {
+                        opt.classList.remove('active');
+                        opt.querySelector('.payment-radio').classList.remove('border-primary');
+                        opt.querySelector('.payment-radio').classList.add('border-gray-300');
+                        opt.querySelector('.payment-radio div').classList.add('opacity-0');
+                    });
+                    
+                    // 添加选中样式
+                    this.classList.add('active');
+                    this.querySelector('.payment-radio').classList.remove('border-gray-300');
+                    this.querySelector('.payment-radio').classList.add('border-primary');
+                    this.querySelector('.payment-radio div').classList.remove('opacity-0');
+                });
+            });
+            
+            // 倒计时功能
+            let seconds = 299; // 5分钟减1秒
+            const countdownTimer = document.getElementById('countdownTimer');
+            const orderExpire = document.getElementById('orderExpire');
+            
+            function updateCountdown() {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                countdownTimer.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                
+                if (seconds <= 60) {
+                    countdownTimer.classList.add('text-red-500');
+                    orderExpire.classList.add('text-red-500');
+                    
+                    if (seconds <= 10) {
+                        countdownTimer.classList.add('shake');
+                    }
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    alert('订单已超时，请重新下单');
+                    window.location.href = 'order_confirm.html';
+                }
+                
+                seconds--;
+            }
+            
+            updateCountdown();
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            
+            // 支付按钮点击事件
+            const payButton = document.getElementById('payButton');
+            const successModal = document.getElementById('successModal');
+            
+            payButton.addEventListener('click', function() {
+                // 验证选择的支付方式
+                const selectedMethod = document.querySelector('.payment-option.active');
+                if (!selectedMethod) {
+                    alert('请选择支付方式');
+                    return;
+                }
+                
+                // 模拟支付中
+                payButton.disabled = true;
+                payButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 支付中...';
+                
+                // 模拟3秒后支付成功
+                setTimeout(() => {
+                    // 显示支付成功弹窗
+                    successModal.classList.remove('invisible', 'opacity-0');
+                    successModal.querySelector('div').classList.remove('scale-95');
+                    successModal.querySelector('div').classList.add('scale-100');
+                    
+                    // 清除倒计时
+                    clearInterval(countdownInterval);
+                    
+                    // 清除订单数据
+                    localStorage.removeItem('pendingOrder');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html> 
